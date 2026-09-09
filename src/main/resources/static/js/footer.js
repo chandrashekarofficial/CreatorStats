@@ -4,6 +4,10 @@
   function loadFooter(){
     if(document.querySelector(".footer")) return;
 
+    document.querySelectorAll("footer:not(.footer)").forEach(function(oldFooter){
+      oldFooter.remove();
+    });
+
     fetch("/footer.html", {cache:"no-store"})
       .then(function(response){
         if(!response.ok) throw new Error("Footer unavailable");
