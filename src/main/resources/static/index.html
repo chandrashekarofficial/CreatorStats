@@ -1,107 +1,1081 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CreatorHub — YouTube Analytics</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/app.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CreatorStats — YouTube Analytics</title>
+    <meta
+        name="description"
+        content="CreatorStats helps creators analyze YouTube channels, understand performance, and discover growth insights."
+    >
+
+    <link rel="stylesheet" href="/css/app.css">
 </head>
+
 <body>
-<div class="app-shell">
-  <aside class="sidebar" id="sidebar">
-    <div class="brand"><div class="brand-mark">▶</div><span>CreatorHub</span></div>
-    <button class="favorite-nav active" id="favoritesNav"><span>★</span> Favorites</button>
-    <div class="sidebar-label">Favorite Channels</div>
-    <div id="favoritesList" class="favorites-list"></div>
-    <div class="sidebar-user">
-      <div class="user-avatar">●</div>
-      <div><strong>CreatorHub User</strong><span>Free Plan</span></div>
-      <span class="chevron">⌄</span>
-    </div>
-  </aside>
 
-  <main class="main-area">
-    <header class="topbar">
-      <div class="search-wrap">
-        <span class="search-icon">⌕</span>
-        <input id="query" autocomplete="off" placeholder="Search channels..." aria-label="Search channels">
-      </div>
-      <div class="top-actions">
-        <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">☼</button>
-        <button class="profile-btn" aria-label="Profile">●</button>
-      </div>
-    </header>
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+<header class="navbar">
+    <div class="nav-container">
 
-    <div class="page">
-      <div class="breadcrumb"><span>Analyze</span><b>›</b><span>Channel Overview</span></div>
-      <div class="page-actions"><button class="outline-btn" id="favoriteBtn">☆ <span>Add to Favorites</span></button></div>
+        <a href="#home" class="brand">
+            <span class="brand-logo">
+                <svg class="creatorstats-logo" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="39" fill="none" stroke="#1685F7" stroke-width="13"/><rect x="78" y="34" width="17" height="32" fill="white"/><path d="M39 29 L68 50 L39 71 Z" fill="#102F63"/></svg>
+            </span>
 
-      <section id="empty" class="empty-state">
-        <div class="empty-icon">▶</div>
-        <h1>Understand any YouTube channel.</h1>
-        <p>Search a channel above to see public performance, rankings, growth indicators, videos and milestones.</p>
-      </section>
+            <span class="brand-text">
+                <strong>Creator<span>Stats</span></strong>
+                <small>Manage. Analyze. Grow.</small>
+            </span>
+        </a>
 
-      <section id="dashboard" class="hidden">
-        <article class="channel-card">
-          <img id="avatar" class="channel-avatar" alt="Channel avatar">
-          <div class="channel-copy">
-            <div class="eyebrow">YOUTUBE CHANNEL</div>
-            <h1 id="channelName">—</h1>
-            <div class="channel-meta" id="channelMeta">—</div>
-            <a id="youtubeLink" target="_blank" rel="noopener">View on YouTube ↗</a>
-          </div>
-        </article>
-
-        <nav class="tabs" aria-label="Channel sections">
-          <button class="tab active" data-section="overview">Overview</button>
-          <button class="tab" data-section="analytics">Analytics</button>
-          <button class="tab" data-section="videos">Videos</button>
-          <button class="tab" data-section="milestones">Milestones</button>
+        <nav class="main-nav" id="mainNav">
+            <a href="#home" class="active">Home</a>
+            <a href="#popular">Popular Channels</a>
+            <a href="#insights">Insights</a>
+            <a href="#about">About</a>
         </nav>
 
-        <section id="section-overview" class="dashboard-section active-section">
-          <div class="notice"><span>i</span><div><strong>Public YouTube data</strong><p>CreatorHub uses publicly available channel statistics.</p></div></div>
-          <div class="section-head"><div><h2>Channel Performance</h2><p>Track subscriber and view performance over time.</p></div><select id="period"><option>Last 90 Days</option></select></div>
-          <div class="stats-grid">
-            <article class="stat-card"><div class="stat-icon purple">♙</div><div><span>Subscribers</span><strong id="subs">—</strong><small id="subsChange">—</small></div></article>
-            <article class="stat-card"><div class="stat-icon blue">◉</div><div><span>Views</span><strong id="views">—</strong><small id="viewsChange">—</small></div></article>
-            <article class="stat-card"><div class="stat-icon violet">▣</div><div><span>Videos</span><strong id="videos">—</strong><small id="videosChange">—</small></div></article>
-            <article class="stat-card"><div class="stat-icon green">$</div><div><span>Estimated Earnings</span><strong id="earnings">—</strong><small>vs last 90 days</small></div></article>
-          </div>
-          <div class="analytics-grid">
-            <article class="panel chart-panel"><div class="panel-head"><h3>Subscriber &amp; View Growth</h3><div class="legend"><span><i class="dot purple-dot"></i>Subscribers</span><span><i class="dot blue-dot"></i>Views</span></div></div><div class="chart-box"><canvas id="growthChart"></canvas></div></article>
-            <article class="panel table-panel"><div class="panel-head"><h3>Daily Statistics</h3></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Subscribers</th><th>Views</th><th>Videos</th><th>Estimated Earnings</th></tr></thead><tbody id="dailyStats"><tr><td colspan="5">Historical tracking coming soon.</td></tr></tbody></table></div><button class="outline-btn small" id="dailyBtn">View All Daily Statistics</button></article>
-          </div>
-          <div class="overview-lower">
-            <article class="panel detail-panel"><div class="panel-head"><h3>Channel Overview</h3><span class="panel-note">Public YouTube data</span></div><div class="detail-grid"><div><span>Average views / video</span><b id="averageViews">—</b></div><div><span>Channel created</span><b id="created">—</b></div><div><span>Country</span><b id="country">—</b></div><div><span>Channel grade</span><b id="grade">—</b></div></div></article>
-            <article class="panel ranking-panel"><div class="panel-head"><h3>Creator Rankings</h3></div><div class="ranking-grid"><div><span>Subscriber Rank</span><b id="subscriberRank">—</b></div><div><span>View Rank</span><b id="viewRank">—</b></div><div><span>Video Rank</span><b id="videoRank">—</b></div></div></article>
-          </div>
-        </section>
+        <div class="nav-actions">
 
-        <section id="section-analytics" class="dashboard-section">
-          <div class="section-head"><div><div class="eyebrow">ANALYTICS</div><h2>Channel Performance</h2><p>Track subscriber and view performance over time.</p></div></div>
-          <div class="panel large-chart"><div class="panel-head"><h3>Growth Trend</h3></div><div class="chart-box tall"><canvas id="analyticsChart"></canvas></div></div>
-        </section>
+            <button
+                type="button"
+                class="theme-toggle"
+                id="themeToggle"
+                aria-label="Toggle theme"
+            >
+                <span class="sun-icon">☼</span>
+                <span class="toggle-track">
+                    <span class="toggle-dot"></span>
+                </span>
+            </button>
 
-        <section id="section-videos" class="dashboard-section">
-          <div class="section-head"><div><div class="eyebrow">VIDEOS</div><h2>Recent Videos</h2><p>Explore the latest videos from this channel.</p></div></div>
-          <article class="panel"><div id="videoCount" class="video-count"></div><div id="videosGrid" class="videos-grid"></div></article>
-        </section>
+            <button type="button" class="signin-btn" id="signInBtn">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                        d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    />
+                    <circle
+                        cx="12"
+                        cy="7"
+                        r="4"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    />
+                </svg>
+                <span>Sign In</span>
+            </button>
 
-        <section id="section-milestones" class="dashboard-section">
-          <div class="section-head"><div><div class="eyebrow">MILESTONES</div><h2>Creator Milestones</h2><p>Subscriber milestones reached by this channel.</p></div></div>
-          <article class="panel"><div id="milestones" class="milestones"></div></article>
-        </section>
-      </section>
-      <div id="error" class="error"></div>
+            <button
+                type="button"
+                class="mobile-menu-btn"
+                id="mobileMenuBtn"
+                aria-label="Open navigation"
+            >
+                ☰
+            </button>
+
+        </div>
     </div>
-  </main>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</header>
+
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+<main id="home">
+
+<section class="hero-section">
+
+    <div class="hero-container">
+
+        <!-- LEFT -->
+        <div class="hero-content">
+
+            <span class="hero-eyebrow">YOUTUBE ANALYTICS</span>
+
+            <h1>
+                Turn YouTube Data into
+                <span>Real Growth Insights</span>
+            </h1>
+
+            <p class="hero-description">
+                Analyze any YouTube channel, track performance,
+                discover trends and get insights to grow your
+                channel faster.
+            </p>
+
+            <!-- ANALYZER -->
+            <div class="analyzer-box">
+
+                <div class="youtube-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect
+                            x="2"
+                            y="5"
+                            width="20"
+                            height="14"
+                            rx="4"
+                            fill="currentColor"
+                        />
+                        <path
+                            d="M10 9 L16 12 L10 15 Z"
+                            fill="white"
+                        />
+                    </svg>
+                </div>
+
+                <input
+                    id="query"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="Enter YouTube channel name or URL..."
+                    aria-label="YouTube channel"
+                >
+
+                <button id="go" type="button" class="analyze-btn">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle
+                            cx="11"
+                            cy="11"
+                            r="7"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        />
+                        <path
+                            d="M16 16 L21 21"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                        />
+                    </svg>
+                    Analyze
+                </button>
+
+            </div>
+
+            <div id="err" class="error-message"></div>
+
+            <!-- BENEFITS -->
+            <div class="benefits-row">
+
+                <div class="benefit">
+                    <span class="check">✓</span>
+                    <span>Real-time Analytics</span>
+                </div>
+
+                <div class="benefit">
+                    <span class="check">✓</span>
+                    <span>Detailed Statistics</span>
+                </div>
+
+                <div class="benefit">
+                    <span class="check">✓</span>
+                    <span>Growth Insights</span>
+                </div>
+
+                <div class="benefit">
+                    <span class="check">✓</span>
+                    <span>100% Free</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT — DASHBOARD PREVIEW -->
+        <div class="hero-dashboard">
+
+            <div class="preview-window">
+
+                <!-- Preview Sidebar -->
+                <aside class="preview-sidebar">
+
+                    <div class="preview-brand">
+                        <span class="preview-logo">
+                            <svg viewBox="0 0 64 64">
+                                <circle
+                                    cx="32"
+                                    cy="32"
+                                    r="24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="7"
+                                />
+                                <path
+                                    d="M27 20 L44 32 L27 44 Z"
+                                    fill="currentColor"
+                                />
+                            </svg>
+                        </span>
+                        <strong>CreatorStats</strong>
+                    </div>
+
+                    <div class="preview-nav">
+
+                        <div class="preview-nav-item active">
+                            <span>⌂</span>
+                            Dashboard
+                        </div>
+
+                        <div class="preview-nav-item">
+                            <span>▣</span>
+                            Videos
+                        </div>
+
+                        <div class="preview-nav-item">
+                            <span>⌁</span>
+                            Analytics
+                        </div>
+
+                        <div class="preview-nav-item">
+                            <span>⌕</span>
+                            SEO
+                        </div>
+
+                        <div class="preview-nav-item">
+                            <span>▤</span>
+                            Reports
+                        </div>
+
+                    </div>
+
+                </aside>
+
+
+                <!-- Preview Main -->
+                <div class="preview-main">
+
+                    <div class="preview-channel">
+
+                        <div class="preview-channel-info">
+
+                            <div class="preview-avatar">
+                                C
+                            </div>
+
+                            <div>
+                                <h3>Crzieo <span>✓</span></h3>
+                                <p>@crzieo</p>
+                                <small>
+                                    1.23M subscribers&nbsp;&nbsp;•&nbsp;&nbsp;482 videos
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <button class="preview-channel-btn">
+                            View Channel
+                        </button>
+
+                    </div>
+
+
+                    <!-- Preview Metrics -->
+                    <div class="preview-metrics">
+
+                        <div class="preview-metric">
+                            <span>Total Views</span>
+                            <strong>481.2M</strong>
+                            <small>↑ 12.5%</small>
+                        </div>
+
+                        <div class="preview-metric">
+                            <span>Watch Time (Hours)</span>
+                            <strong>12.8M</strong>
+                            <small>↑ 14.2%</small>
+                        </div>
+
+                        <div class="preview-metric">
+                            <span>Subscribers</span>
+                            <strong>1.23M</strong>
+                            <small>↑ 8.7%</small>
+                        </div>
+
+                        <div class="preview-metric">
+                            <span>Est. Earnings</span>
+                            <strong>$3.2K - $51.6K</strong>
+                            <small>↑ 11.3%</small>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Preview Charts -->
+                    <div class="preview-charts">
+
+                        <div class="preview-chart-card">
+
+                            <div class="chart-title">
+                                Views Last 28 Days
+                            </div>
+
+                            <div class="fake-chart">
+
+                                <div class="chart-grid"></div>
+
+                                <svg viewBox="0 0 500 150"
+                                     preserveAspectRatio="none">
+
+                                    <polyline
+                                        points="
+                                        0,125
+                                        30,128
+                                        60,105
+                                        90,92
+                                        120,104
+                                        150,88
+                                        180,94
+                                        210,73
+                                        240,78
+                                        270,52
+                                        300,76
+                                        330,55
+                                        360,22
+                                        390,42
+                                        420,12
+                                        450,7
+                                        475,30
+                                        500,18
+                                        "
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="4"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+
+                                </svg>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="countries-card">
+
+                            <div class="chart-title">
+                                Top Countries
+                            </div>
+
+                            <div class="country-row">
+                                <span>🇺🇸</span>
+                                <span>United States</span>
+                                <div class="country-bar">
+                                    <i style="width:82%"></i>
+                                </div>
+                                <b>38.2%</b>
+                            </div>
+
+                            <div class="country-row">
+                                <span>🇮🇳</span>
+                                <span>India</span>
+                                <div class="country-bar">
+                                    <i style="width:16%"></i>
+                                </div>
+                                <b>5.1%</b>
+                            </div>
+
+                            <div class="country-row">
+                                <span>🇬🇧</span>
+                                <span>United Kingdom</span>
+                                <div class="country-bar">
+                                    <i style="width:14%"></i>
+                                </div>
+                                <b>4.4%</b>
+                            </div>
+
+                            <div class="country-row">
+                                <span>🇵🇭</span>
+                                <span>Philippines</span>
+                                <div class="country-bar">
+                                    <i style="width:11%"></i>
+                                </div>
+                                <b>3.6%</b>
+                            </div>
+
+                            <div class="country-row">
+                                <span>🇨🇦</span>
+                                <span>Canada</span>
+                                <div class="country-bar">
+                                    <i style="width:10%"></i>
+                                </div>
+                                <b>3.4%</b>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     POPULAR CHANNELS
+========================================================= -->
+<section class="popular-section" id="popular">
+
+    <div class="section-container">
+
+        <div class="section-heading">
+
+            <div>
+                <div class="section-title-row">
+                    <span class="fire-icon">♨</span>
+                    <h2>Popular Channels</h2>
+                </div>
+
+                <p>
+                    Discover top YouTube channels and explore their performance
+                </p>
+            </div>
+
+            <button type="button" class="view-all-btn">
+                View All
+                <span>→</span>
+            </button>
+
+        </div>
+
+
+        <div class="channel-grid">
+
+
+            <!-- MrBeast -->
+            <article class="channel-card">
+
+                <div class="channel-card-top">
+
+                    <div class="channel-avatar mrbeast">
+                        MB
+                    </div>
+
+                    <div class="channel-basic">
+                        <h3>MrBeast <span>✓</span></h3>
+                        <p>@MrBeast</p>
+                    </div>
+
+                </div>
+
+                <div class="subscriber-number">
+                    250M+
+                </div>
+
+                <div class="subscriber-label">
+                    subscribers
+                </div>
+
+                <div class="channel-stats">
+
+                    <div>
+                        <strong>57.8B</strong>
+                        <span>total views</span>
+                    </div>
+
+                    <div>
+                        <strong>808</strong>
+                        <span>videos</span>
+                    </div>
+
+                </div>
+
+                <button
+                    class="channel-analyze-btn"
+                    data-query="@MrBeast"
+                >
+                    View Analytics
+                </button>
+
+            </article>
+
+
+            <!-- PewDiePie -->
+            <article class="channel-card">
+
+                <div class="channel-card-top">
+
+                    <div class="channel-avatar pewdiepie">
+                        PD
+                    </div>
+
+                    <div class="channel-basic">
+                        <h3>PewDiePie <span>✓</span></h3>
+                        <p>@PewDiePie</p>
+                    </div>
+
+                </div>
+
+                <div class="subscriber-number">
+                    111M+
+                </div>
+
+                <div class="subscriber-label">
+                    subscribers
+                </div>
+
+                <div class="channel-stats">
+
+                    <div>
+                        <strong>28.4B</strong>
+                        <span>total views</span>
+                    </div>
+
+                    <div>
+                        <strong>4.5K</strong>
+                        <span>videos</span>
+                    </div>
+
+                </div>
+
+                <button
+                    class="channel-analyze-btn"
+                    data-query="@PewDiePie"
+                >
+                    View Analytics
+                </button>
+
+            </article>
+
+
+            <!-- T-Series -->
+            <article class="channel-card">
+
+                <div class="channel-card-top">
+
+                    <div class="channel-avatar tseries">
+                        T
+                    </div>
+
+                    <div class="channel-basic">
+                        <h3>T-Series <span>✓</span></h3>
+                        <p>@TSeries</p>
+                    </div>
+
+                </div>
+
+                <div class="subscriber-number">
+                    268M+
+                </div>
+
+                <div class="subscriber-label">
+                    subscribers
+                </div>
+
+                <div class="channel-stats">
+
+                    <div>
+                        <strong>265.8B</strong>
+                        <span>total views</span>
+                    </div>
+
+                    <div>
+                        <strong>22.1K</strong>
+                        <span>videos</span>
+                    </div>
+
+                </div>
+
+                <button
+                    class="channel-analyze-btn"
+                    data-query="@TSeries"
+                >
+                    View Analytics
+                </button>
+
+            </article>
+
+
+            <!-- Ryan Trahan -->
+            <article class="channel-card">
+
+                <div class="channel-card-top">
+
+                    <div class="channel-avatar ryan">
+                        RT
+                    </div>
+
+                    <div class="channel-basic">
+                        <h3>Ryan Trahan <span>✓</span></h3>
+                        <p>@ryantrahan</p>
+                    </div>
+
+                </div>
+
+                <div class="subscriber-number">
+                    20.4M+
+                </div>
+
+                <div class="subscriber-label">
+                    subscribers
+                </div>
+
+                <div class="channel-stats">
+
+                    <div>
+                        <strong>4.1B</strong>
+                        <span>total views</span>
+                    </div>
+
+                    <div>
+                        <strong>640</strong>
+                        <span>videos</span>
+                    </div>
+
+                </div>
+
+                <button
+                    class="channel-analyze-btn"
+                    data-query="@ryantrahan"
+                >
+                    View Analytics
+                </button>
+
+            </article>
+
+
+            <!-- Like Nastya -->
+            <article class="channel-card">
+
+                <div class="channel-card-top">
+
+                    <div class="channel-avatar nastya">
+                        C
+                    </div>
+
+                    <div class="channel-basic">
+                        <h3>Like Nastya <span>✓</span></h3>
+                        <p>@LikeNastyaOfficial</p>
+                    </div>
+
+                </div>
+
+                <div class="subscriber-number">
+                    125M+
+                </div>
+
+                <div class="subscriber-label">
+                    subscribers
+                </div>
+
+                <div class="channel-stats">
+
+                    <div>
+                        <strong>107.3B</strong>
+                        <span>total views</span>
+                    </div>
+
+                    <div>
+                        <strong>830</strong>
+                        <span>videos</span>
+                    </div>
+
+                </div>
+
+                <button
+                    class="channel-analyze-btn"
+                    data-query="@LikeNastyaOfficial"
+                >
+                    View Analytics
+                </button>
+
+            </article>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     INSIGHTS
+========================================================= -->
+<section class="insights-section" id="insights">
+
+    <div class="section-container">
+
+        <div class="insights-content">
+
+            <span class="section-eyebrow">
+                CREATOR INSIGHTS
+            </span>
+
+            <h2>
+                Understand your channel.
+                <span>Grow with confidence.</span>
+            </h2>
+
+            <p>
+                CreatorStats turns public YouTube data into clear,
+                useful information so creators can understand
+                channel performance and identify growth opportunities.
+            </p>
+
+            <div class="insight-points">
+
+                <div class="insight-point">
+                    <span>✓</span>
+                    <div>
+                        <strong>Track Performance</strong>
+                        <p>Monitor important channel statistics in one place.</p>
+                    </div>
+                </div>
+
+                <div class="insight-point">
+                    <span>✓</span>
+                    <div>
+                        <strong>Discover Trends</strong>
+                        <p>Understand how your channel is performing over time.</p>
+                    </div>
+                </div>
+
+                <div class="insight-point">
+                    <span>✓</span>
+                    <div>
+                        <strong>Make Better Decisions</strong>
+                        <p>Use data to plan your next steps with confidence.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     REAL ANALYZER RESULTS
+========================================================= -->
+<section id="dash" class="results-section hide">
+
+    <div class="section-container">
+
+        <div class="results-header">
+
+            <div>
+                <span class="section-eyebrow">
+                    CHANNEL ANALYSIS
+                </span>
+
+                <h2>Your YouTube Channel</h2>
+            </div>
+
+            <a
+                id="yt"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="youtube-link"
+            >
+                View on YouTube ↗
+            </a>
+
+        </div>
+
+
+        <!-- Channel -->
+        <div class="result-channel-card">
+
+            <div class="result-channel-left">
+
+                <img
+                    id="avatar"
+                    src=""
+                    alt="Channel avatar"
+                    class="result-avatar"
+                >
+
+                <div>
+                    <h2 id="name">Channel</h2>
+                    <span id="handle">@channel</span>
+                    <p id="meta">Channel information</p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Metrics -->
+        <div class="result-metrics">
+
+            <article>
+                <span>Subscribers</span>
+                <strong id="subs">—</strong>
+                <small>Public count</small>
+            </article>
+
+            <article>
+                <span>Total Views</span>
+                <strong id="views">—</strong>
+                <small>Channel lifetime</small>
+            </article>
+
+            <article>
+                <span>Videos</span>
+                <strong id="videos">—</strong>
+                <small>Published videos</small>
+            </article>
+
+            <article>
+                <span>Avg. Views / Video</span>
+                <strong id="avg">—</strong>
+                <small>Simple average</small>
+            </article>
+
+        </div>
+
+
+        <div class="results-grid">
+
+            <article class="result-panel">
+
+                <div class="panel-heading">
+                    <div>
+                        <h3>Recent Video Performance</h3>
+                        <span>Latest uploads</span>
+                    </div>
+                </div>
+
+                <div id="bars" class="bars"></div>
+
+            </article>
+
+
+            <article class="result-panel">
+
+                <div class="panel-heading">
+                    <div>
+                        <h3>Channel Snapshot</h3>
+                        <span>Public information</span>
+                    </div>
+                </div>
+
+                <div class="snapshot">
+
+                    <div>
+                        <span>Created</span>
+                        <strong id="created">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Country</span>
+                        <strong id="country">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Channel ID</span>
+                        <strong id="cid">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Data source</span>
+                        <strong>YouTube Data API</strong>
+                    </div>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     ABOUT
+========================================================= -->
+<section class="about-section" id="about">
+
+    <div class="section-container">
+
+        <div class="about-card">
+
+            <div class="about-logo">
+                <svg viewBox="0 0 64 64">
+                    <circle
+                        cx="32"
+                        cy="32"
+                        r="26"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="7"
+                    />
+                    <path
+                        d="M27 20 L45 32 L27 44 Z"
+                        fill="currentColor"
+                    />
+                </svg>
+            </div>
+
+            <div>
+                <span class="section-eyebrow">
+                    ABOUT CREATORSTATS
+                </span>
+
+                <h2>
+                    Better insights. Bigger growth.
+                </h2>
+
+                <p>
+                    CreatorStats is built to make YouTube analytics
+                    easier to understand. Analyze channels, explore
+                    performance and turn data into useful growth insights.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+<footer class="footer">
+
+    <div class="footer-container">
+
+        <div class="footer-brand">
+
+            <a href="#home" class="footer-logo">
+
+                <span class="footer-logo-icon">
+                    <svg viewBox="0 0 64 64">
+                        <circle
+                            cx="32"
+                            cy="32"
+                            r="26"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="7"
+                        />
+                        <path
+                            d="M27 20 L45 32 L27 44 Z"
+                            fill="currentColor"
+                        />
+                    </svg>
+                </span>
+
+                <span>
+                    Creator<span>Stats</span>
+                </span>
+
+            </a>
+
+            <p class="footer-tagline">
+                Manage. Analyze. Grow.
+            </p>
+
+            <p>
+                Better insights. Bigger growth.<br>
+                Your YouTube analytics companion.
+            </p>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h3>Quick Links</h3>
+
+            <a href="#home">Home</a>
+            <a href="#popular">Popular Channels</a>
+            <a href="#insights">Insights</a>
+            <a href="#about">About</a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h3>Resources</h3>
+
+            <a href="#">FAQ</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Contact</a>
+
+        </div>
+
+
+        <div class="footer-column social-column">
+
+            <h3>Follow Us</h3>
+
+            <div class="social-links">
+
+                <a href="https://www.instagram.com/thecreatorstats" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+                </a>
+
+                <a href="https://youtube.com/@thecreatorstats" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8Z"/><path d="m9.5 8.5 6.5 3.5-6.5 3.5v-7Z" fill="white"/></svg>
+                </a>
+
+                <a href="https://x.com/thecreatorstats" target="_blank" rel="noopener noreferrer" aria-label="X">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4 19 20M19 4 5 20"/></svg>
+                </a>
+
+                <a href="https://discord.gg/EXMb25ecW" target="_blank" rel="noopener noreferrer" aria-label="Discord">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 5.2A16.6 16.6 0 0 0 15 4l-.5 1a14.2 14.2 0 0 0-5 0L9 4a16.6 16.6 0 0 0-3.9 1.2C2.6 8.9 2 12.5 2.3 16.1A16.3 16.3 0 0 0 7 18.5l1.1-1.5a9.7 9.7 0 0 1-1.7-.8l.4-.3a11.6 11.6 0 0 0 10.4 0l.4.3a9.7 9.7 0 0 1-1.7.8l1.1 1.5a16.3 16.3 0 0 0 4.7-2.4c.4-4.2-.7-7.8-2.8-10.9ZM8.7 14.1c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Z"/></svg>
+                </a>
+
+            </div>
+
+            <p class="copyright">
+                © 2025 CreatorStats. All rights reserved.
+            </p>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
 <script src="/js/app.js"></script>
+
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+

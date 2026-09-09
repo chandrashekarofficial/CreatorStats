@@ -1,49 +1,1095 @@
-const $ = id => document.getElementById(id);
-const num = value => { const n = Number(value || 0); if(n>=1e9)return (n/1e9).toFixed(2).replace(/\.00$/,'')+'B'; if(n>=1e6)return (n/1e6).toFixed(2).replace(/\.00$/,'')+'M'; if(n>=1e3)return (n/1e3).toFixed(2).replace(/\.00$/,'')+'K'; return n.toLocaleString(); };
-const esc = value => String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
-const formatDate = value => value ? new Date(value).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}) : '—';
-function calculateGrade(subs,views,videos){subs=Number(subs||0);views=Number(views||0);videos=Number(videos||0);if(subs>=1e6)return'A+';if(subs>=5e5)return'A';if(subs>=1e5)return'A-';if(subs>=5e4)return'B+';if(subs>=1e4)return'B';if(subs>=5e3)return'B-';if(subs>=1e3)return'C+';if(videos&&views/videos>=1e4)return'C';return'C-';}
-function calculateRank(n){n=Number(n||0);if(n>=1e7)return'Top 0.1%';if(n>=1e6)return'Top 1%';if(n>=1e5)return'Top 5%';if(n>=1e4)return'Top 15%';if(n>=1e3)return'Top 30%';return'Growing';}
-function earnings(views){const monthly=Number(views||0)/12;return '$'+Math.round(monthly*.5/1000).toLocaleString()+' - $'+Math.round(monthly*4/1000).toLocaleString();}
-let currentChannel=null, growthChart=null, analyticsChart=null;
+/* =========================================================
+   CreatorStats â€” Landing Page JavaScript
+   ========================================================= */
 
-async function analyze(queryOverride){
-  const query=(queryOverride ?? $('query').value).trim(); if(!query){$('error').textContent='Enter a YouTube channel name, URL, @handle or channel ID.';return;}
-  $('error').textContent='';
-  try{
-    $('query').value=query;
-    const response=await fetch('/api/public/youtube/channel?query='+encodeURIComponent(query));
-    const data=await response.json(); if(!response.ok)throw new Error(data.message||data.error||'Unable to load channel.');
-    if(!data?.channelId)throw new Error('Channel not found.');
-    currentChannel={channelId:data.channelId,title:data.title,description:data.description,thumbnail:data.thumbnail||'',publishedAt:data.publishedAt,country:data.country||'',subscribers:Number(data.subscribers||0),views:Number(data.views||0),videos:Number(data.videos||0)};
-    renderChannel(currentChannel); await loadVideos(currentChannel.channelId); saveFavorite(currentChannel); renderFavorites();
-  }catch(e){console.error(e);$('error').textContent=e.message||'Something went wrong.';}
+"use strict";
+
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+const $ = (id) => document.getElementById(id);
+
+function num(value) {
+    const n = Number(value || 0);
+
+    if (n >= 1e9) {
+        return (n / 1e9).toFixed(2).replace(/\.00$/, "") + "B";
+    }
+
+    if (n >= 1e6) {
+        return (n / 1e6).toFixed(2).replace(/\.00$/, "") + "M";
+    }
+
+    if (n >= 1e3) {
+        return (n / 1e3).toFixed(2).replace(/\.00$/, "") + "K";
+    }
+
+    return n.toLocaleString();
 }
-function renderChannel(c){
-  $('empty').classList.add('hidden');$('dashboard').classList.remove('hidden');
-  $('channelName').textContent=c.title||'YouTube Channel';$('channelMeta').textContent=num(c.subscribers)+' · '+num(c.videos)+' videos';$('avatar').src=c.thumbnail||'';$('youtubeLink').href='https://www.youtube.com/channel/'+encodeURIComponent(c.channelId);
-  $('subs').textContent=num(c.subscribers);$('views').textContent=num(c.views);$('videos').textContent=num(c.videos);$('earnings').textContent=earnings(c.views);$('grade').textContent=calculateGrade(c.subscribers,c.views,c.videos);$('subscriberRank').textContent=calculateRank(c.subscribers);$('viewRank').textContent=calculateRank(c.views);$('videoRank').textContent=calculateRank(c.videos);$('averageViews').textContent=c.videos?num(Math.round(c.views/c.videos)):'—';$('created').textContent=formatDate(c.publishedAt);$('country').textContent=c.country||'Not public';
-  $('subsChange').textContent='Current public count';$('viewsChange').textContent='Current public count';$('videosChange').textContent='Current public count';
-  renderGrowthCharts(c);
+
+function esc(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }
-async function loadVideos(channelId){
-  try{const response=await fetch('/api/public/youtube/videos?channelId='+encodeURIComponent(channelId));const data=await response.json();if(!response.ok)throw new Error(data.message||'Unable to load videos.');const videos=data.videos||[];$('videoCount').textContent=videos.length+' recent videos';$('videosGrid').innerHTML=videos.map(v=>`<article class="video-card"><img src="${esc(v.thumbnail||'')}" alt=""><div class="video-body"><h4>${esc(v.title||'Untitled video')}</h4><p>${num(v.views)} views${v.publishedAt?' · '+formatDate(v.publishedAt):''}</p></div></article>`).join('')||'<p>No recent videos found.</p>';}catch(e){console.error(e);$('videosGrid').innerHTML='<p>'+esc(e.message)+'</p>';}}
-function makeDates(n=8){const out=[];for(let i=n-1;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i*12);out.push(d.toLocaleDateString(undefined,{month:'short',day:'numeric'}));}return out;}
-function renderGrowthCharts(c){if(typeof Chart==='undefined')return;const labels=makeDates();const subBase=Math.max(c.subscribers*.94,0),viewBase=Math.max(c.views*.88,0);const subs=labels.map((_,i)=>Math.round(subBase+(c.subscribers-subBase)*(i/(labels.length-1))));const views=labels.map((_,i)=>Math.round(viewBase+(c.views-viewBase)*(i/(labels.length-1))));const common={responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#667085',font:{size:10}}},y:{grid:{color:'#edf0f4'},ticks:{color:'#667085',font:{size:10},callback:v=>num(v)}}}};
-  if(growthChart)growthChart.destroy();growthChart=new Chart($('growthChart'),{type:'line',data:{labels,datasets:[{label:'Subscribers',data:subs,borderColor:'#4b2be7',backgroundColor:'#4b2be7',borderWidth:2,pointRadius:0,tension:.3,yAxisID:'y'},{label:'Views',data:views,borderColor:'#3279ef',backgroundColor:'#3279ef',borderWidth:2,pointRadius:0,tension:.3,yAxisID:'y1'}]},options:{...common,scales:{...common.scales,y:{...common.scales.y,position:'left'},y1:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'#667085',font:{size:10},callback:v=>num(v)}}}}});
-  if(analyticsChart)analyticsChart.destroy();analyticsChart=new Chart($('analyticsChart'),{type:'line',data:{labels,datasets:[{label:'Subscribers',data:subs,borderColor:'#4b2be7',borderWidth:2,pointRadius:2,tension:.35},{label:'Views',data:views,borderColor:'#3279ef',borderWidth:2,pointRadius:2,tension:.35}]},options:{...common,plugins:{legend:{display:true,position:'bottom'}}}});
+
+function date(value) {
+    if (!value) return "â€”";
+
+    const d = new Date(value);
+
+    if (Number.isNaN(d.getTime())) {
+        return "â€”";
+    }
+
+    return d.toLocaleDateString(undefined, {
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+    });
 }
-function renderMilestones(subs){const levels=[1000,10000,100000,1000000,10000000];$('milestones').innerHTML=levels.map(x=>`<div class="milestone ${Number(subs)>=x?'done':''}"><strong>${num(x)}</strong><span>${Number(subs)>=x?'✓ Reached':'Not reached yet'}</span></div>`).join('');}
-function getFavorites(){try{return JSON.parse(localStorage.getItem('creatorhub_favorites')||'[]')}catch{return[]}}
-function saveFavorite(c){let list=getFavorites().filter(x=>x.channelId!==c.channelId);list.unshift(c);localStorage.setItem('creatorhub_favorites',JSON.stringify(list.slice(0,5)));}
-function removeFavorite(id){localStorage.setItem('creatorhub_favorites',JSON.stringify(getFavorites().filter(x=>x.channelId!==id)));if(currentChannel?.channelId===id)updateFavoriteButton();renderFavorites();}
-function isFavorite(){return !!currentChannel&&getFavorites().some(x=>x.channelId===currentChannel.channelId)}
-function updateFavoriteButton(){$('favoriteBtn').innerHTML=isFavorite()?'★ <span>Remove from Favorites</span>':'☆ <span>Add to Favorites</span>';}
-function renderFavorites(){const list=getFavorites();$('favoritesList').innerHTML=list.length?list.map(c=>`<button class="favorite-item ${currentChannel?.channelId===c.channelId?'active':''}" data-id="${esc(c.channelId)}"><img src="${esc(c.thumbnail||'')}" alt=""><span class="favorite-info"><strong>${esc(c.title||'Channel')}</strong><span>${num(c.subscribers)} subscribers</span></span><span class="favorite-star">${currentChannel?.channelId===c.channelId?'★':'☆'}</span></button>`).join(''):'<div style="padding:12px 5px;color:#98a2b3;font-size:12px">No favorite channels yet.</div>';
-  document.querySelectorAll('.favorite-item').forEach(btn=>btn.addEventListener('click',()=>analyze(btn.dataset.id)));
-  updateFavoriteButton();
+
+function duration(seconds) {
+    const sec = Number(seconds || 0);
+
+    if (!sec) return "â€”";
+
+    const minutes = Math.floor(sec / 60);
+    const remaining = sec % 60;
+
+    return `${minutes}:${String(remaining).padStart(2, "0")}`;
 }
-function switchSection(name){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.section===name));document.querySelectorAll('.dashboard-section').forEach(s=>s.classList.toggle('active-section',s.id==='section-'+name));if(name==='milestones'&&currentChannel)renderMilestones(currentChannel.subscribers);}
-document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>switchSection(b.dataset.section)));
-$('query').addEventListener('keydown',e=>{if(e.key==='Enter')analyze()});$('query').addEventListener('change',()=>{if($('query').value.trim())analyze()});$('favoriteBtn').addEventListener('click',()=>{if(!currentChannel)return;isFavorite()?removeFavorite(currentChannel.channelId):(saveFavorite(currentChannel),renderFavorites())});$('themeToggle').addEventListener('click',()=>document.body.classList.toggle('dark'));$('dailyBtn').addEventListener('click',()=>alert('Historical daily snapshots will appear here once daily tracking is enabled.'));
-renderFavorites();
+
+
+/* =========================================================
+   STATE
+   ========================================================= */
+
+let currentChannel = null;
+
+
+/* =========================================================
+   ANALYZE CHANNEL
+   ========================================================= */
+
+async function analyze(forcedQuery = null) {
+
+    const input = $("query");
+    const error = $("err");
+    const button = $("go");
+
+    if (!input || !button) {
+        console.error("CreatorStats: analyzer elements not found.");
+        return;
+    }
+
+    const query = String(
+        forcedQuery !== null
+            ? forcedQuery
+            : input.value
+    ).trim();
+
+    error.textContent = "";
+
+    if (!query) {
+        error.textContent =
+            "Enter a YouTube channel URL, @handle, or channel ID.";
+
+        input.focus();
+        return;
+    }
+
+    input.value = query;
+
+    button.disabled = true;
+
+    const originalButtonHTML = button.innerHTML;
+
+    button.innerHTML = `
+        <span class="loading-spinner"></span>
+        Analyzing...
+    `;
+
+    try {
+
+        const response = await fetch(
+            "/api/public/youtube/channel?query=" +
+            encodeURIComponent(query)
+        );
+
+        let data = {};
+
+        try {
+            data = await response.json();
+        } catch {
+            throw new Error(
+                "The server returned an invalid response."
+            );
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                data.message ||
+                data.error ||
+                "Unable to analyze this YouTube channel."
+            );
+        }
+
+        currentChannel = data;
+
+        window.location.href = "/analytics.html?channel=" + encodeURIComponent(data.channelId || query);
+
+    } catch (errorObject) {
+
+        console.error(
+            "CreatorStats analyzer error:",
+            errorObject
+        );
+
+        error.textContent =
+            errorObject.message ||
+            "Something went wrong while analyzing the channel.";
+
+    } finally {
+
+        button.disabled = false;
+
+        button.innerHTML = originalButtonHTML || `
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="6.5"></circle>
+                <path d="m16 16 5 5"></path>
+            </svg>
+            Analyze
+        `;
+    }
+}
+
+
+/* =========================================================
+   RENDER CHANNEL RESULTS
+   ========================================================= */
+
+function renderChannel(data) {
+
+    const dash = $("dash");
+
+    if (!dash) {
+        console.error(
+            "CreatorStats: #dash was not found in index.html."
+        );
+        return;
+    }
+
+    dash.classList.remove("hide");
+
+    const videos = Array.isArray(data.recentVideos)
+        ? data.recentVideos
+        : [];
+
+    const totalVideos = Number(data.videos || 0);
+    const totalViews = Number(data.views || 0);
+
+    const averageViews =
+        totalVideos > 0
+            ? Math.round(totalViews / totalVideos)
+            : 0;
+
+
+    /* -----------------------------------------------------
+       Channel information
+    ----------------------------------------------------- */
+
+    if ($("name")) {
+        $("name").textContent =
+            data.title || "YouTube Channel";
+    }
+
+    if ($("meta")) {
+        $("meta").textContent =
+            `${num(data.subscribers)} subscribers Â· ${num(data.videos)} videos`;
+    }
+
+    if ($("avatar")) {
+        $("avatar").src = data.thumbnail || "";
+        $("avatar").alt =
+            `${data.title || "Channel"} avatar`;
+    }
+
+
+    /* -----------------------------------------------------
+       Metrics
+    ----------------------------------------------------- */
+
+    if ($("subs")) {
+        $("subs").textContent =
+            data.hiddenSubscribers
+                ? "Hidden"
+                : num(data.subscribers);
+    }
+
+    if ($("views")) {
+        $("views").textContent =
+            num(data.views);
+    }
+
+    if ($("videos")) {
+        $("videos").textContent =
+            num(data.videos);
+    }
+
+    if ($("avg")) {
+        $("avg").textContent =
+            averageViews
+                ? num(averageViews)
+                : "â€”";
+    }
+
+
+    /* -----------------------------------------------------
+       Channel snapshot
+    ----------------------------------------------------- */
+
+    if ($("created")) {
+        $("created").textContent =
+            date(data.publishedAt);
+    }
+
+    if ($("country")) {
+        $("country").textContent =
+            data.country || "Not public";
+    }
+
+    if ($("cid")) {
+        $("cid").textContent =
+            data.channelId || "â€”";
+    }
+
+
+    /* -----------------------------------------------------
+       YouTube link
+    ----------------------------------------------------- */
+
+    if ($("yt") && data.channelId) {
+
+        $("yt").href =
+            "https://www.youtube.com/channel/" +
+            encodeURIComponent(data.channelId);
+
+        $("yt").target = "_blank";
+        $("yt").rel = "noopener noreferrer";
+    }
+
+
+    /* -----------------------------------------------------
+       Recent performance bars
+    ----------------------------------------------------- */
+
+    renderPerformanceBars(videos);
+
+
+    /* -----------------------------------------------------
+       Recent video lists
+    ----------------------------------------------------- */
+
+    const sortedVideos = [...videos].sort(
+        (a, b) =>
+            Number(b.views || 0) -
+            Number(a.views || 0)
+    );
+
+    const shorts = videos.filter(
+        video =>
+            Number(video.durationSeconds || 0) <= 60
+    );
+
+    const longVideos = videos.filter(
+        video =>
+            Number(video.durationSeconds || 0) > 60
+    );
+
+
+    if ($("overviewList")) {
+        $("overviewList").innerHTML =
+            videoListHTML(sortedVideos);
+    }
+
+    if ($("videosList")) {
+        $("videosList").innerHTML =
+            longVideos.length
+                ? videoListHTML(longVideos)
+                : emptyMessage(
+                    "No long-form videos detected."
+                );
+    }
+
+    if ($("shortsList")) {
+        $("shortsList").innerHTML =
+            shorts.length
+                ? videoListHTML(shorts)
+                : emptyMessage(
+                    "No Shorts detected in the latest uploads."
+                );
+    }
+
+
+    /* -----------------------------------------------------
+       Analytics
+    ----------------------------------------------------- */
+
+    const totalRecent = videos.length || 1;
+
+    const shortPercentage =
+        Math.round(
+            (shorts.length / totalRecent) * 100
+        );
+
+    const videoPercentage =
+        Math.round(
+            (longVideos.length / totalRecent) * 100
+        );
+
+    const likes = videos.reduce(
+        (sum, video) =>
+            sum + Number(video.likes || 0),
+        0
+    );
+
+    const comments = videos.reduce(
+        (sum, video) =>
+            sum + Number(video.comments || 0),
+        0
+    );
+
+    const recentViews = videos.reduce(
+        (sum, video) =>
+            sum + Number(video.views || 0),
+        0
+    );
+
+    const engagement =
+        recentViews > 0
+            ? Math.round(
+                ((likes + comments) /
+                    recentViews) *
+                10000
+            ) / 100
+            : 0;
+
+
+    if ($("mix")) {
+
+        $("mix").innerHTML = `
+            <strong>
+                ${shortPercentage}% Shorts Â·
+                ${videoPercentage}% Videos
+            </strong>
+
+            <p>
+                ${videos.length}
+                recent uploads analyzed by duration.
+            </p>
+        `;
+    }
+
+
+    if ($("engagement")) {
+
+        $("engagement").innerHTML = `
+            <strong>${engagement}%</strong>
+
+            <p>
+                Likes and comments relative to
+                recent public views.
+            </p>
+        `;
+    }
+
+
+    /* -----------------------------------------------------
+       Milestones
+    ----------------------------------------------------- */
+
+    renderMilestones(data);
+
+
+    /* -----------------------------------------------------
+       Future scenarios
+    ----------------------------------------------------- */
+
+    renderFuture(data);
+
+
+    /* -----------------------------------------------------
+       Scroll to results
+    ----------------------------------------------------- */
+
+    setTimeout(() => {
+
+        dash.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }, 100);
+}
+
+
+/* =========================================================
+   PERFORMANCE BARS
+   ========================================================= */
+
+function renderPerformanceBars(videos) {
+
+    const container = $("bars");
+
+    if (!container) return;
+
+    if (!videos.length) {
+
+        container.innerHTML = `
+            <div class="analytics-box">
+                No recent video data available.
+            </div>
+        `;
+
+        return;
+    }
+
+    const values = videos.map(
+        video => Number(video.views || 0)
+    );
+
+    const max =
+        Math.max(...values, 1);
+
+    container.innerHTML =
+        [...videos]
+            .reverse()
+            .map(video => {
+
+                const views =
+                    Number(video.views || 0);
+
+                const height =
+                    Math.max(
+                        8,
+                        (views / max) * 92
+                    );
+
+                return `
+                    <div
+                        class="bar"
+                        style="height:${height}%"
+                        title="${esc(video.title || "Video")}: ${num(views)} views"
+                    >
+                        <span>${num(views)}</span>
+                    </div>
+                `;
+            })
+            .join("");
+}
+
+
+/* =========================================================
+   VIDEO LIST
+   ========================================================= */
+
+function videoListHTML(items) {
+
+    if (!items.length) {
+
+        return emptyMessage(
+            "No recent videos available."
+        );
+    }
+
+    return items
+        .map(video => {
+
+            const seconds =
+                Number(video.durationSeconds || 0);
+
+            const type =
+                video.type ||
+                (seconds <= 60
+                    ? "Short"
+                    : "Video");
+
+            return `
+                <div class="video-row">
+
+                    <img
+                        src="${esc(video.thumbnail || "")}"
+                        alt=""
+                        loading="lazy"
+                    >
+
+                    <div>
+                        <div class="video-title">
+                            ${esc(video.title || "Untitled video")}
+                        </div>
+
+                        <div class="video-sub">
+                            ${esc(type)}
+                            Â·
+                            ${duration(seconds)}
+                            Â·
+                            ${date(video.publishedAt)}
+                        </div>
+                    </div>
+
+                    <div class="video-stats">
+                        ${num(video.views)}
+                        <small>views</small>
+                    </div>
+
+                </div>
+            `;
+        })
+        .join("");
+}
+
+
+/* =========================================================
+   EMPTY MESSAGE
+   ========================================================= */
+
+function emptyMessage(message) {
+
+    return `
+        <div class="analytics-box">
+            ${esc(message)}
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   MILESTONES
+   ========================================================= */
+
+function renderMilestones(data) {
+
+    const container = $("milestones");
+
+    if (!container) return;
+
+    const subscribers =
+        Number(data.subscribers || 0);
+
+    const views =
+        Number(data.views || 0);
+
+    const videos =
+        Number(data.videos || 0);
+
+
+    const subscriberTargets = [
+        1000,
+        10000,
+        100000,
+        1000000,
+        10000000,
+        100000000
+    ];
+
+    const viewTargets = [
+        1000000,
+        10000000,
+        100000000,
+        1000000000,
+        10000000000,
+        100000000000
+    ];
+
+
+    const nextSubscriber =
+        subscriberTargets.find(
+            target => target > subscribers
+        );
+
+    const nextView =
+        viewTargets.find(
+            target => target > views
+        );
+
+
+    container.innerHTML = `
+
+        <div class="milestone">
+
+            <span>
+                Current subscribers
+            </span>
+
+            <strong>
+                ${
+                    data.hiddenSubscribers
+                        ? "Hidden"
+                        : num(subscribers)
+                }
+            </strong>
+
+            <span>
+                ${
+                    nextSubscriber
+                        ? num(nextSubscriber) +
+                          " next milestone"
+                        : "Major milestone range reached"
+                }
+            </span>
+
+        </div>
+
+
+        <div class="milestone">
+
+            <span>
+                Current views
+            </span>
+
+            <strong>
+                ${num(views)}
+            </strong>
+
+            <span>
+                ${
+                    nextView
+                        ? num(nextView) +
+                          " next view milestone"
+                        : "Major milestone range reached"
+                }
+            </span>
+
+        </div>
+
+
+        <div class="milestone">
+
+            <span>
+                Published videos
+            </span>
+
+            <strong>
+                ${num(videos)}
+            </strong>
+
+            <span>
+                Public lifetime count
+            </span>
+
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   FUTURE SCENARIOS
+   ========================================================= */
+
+function renderFuture(data) {
+
+    const container = $("future");
+
+    if (!container) return;
+
+    const subscribers =
+        Number(data.subscribers || 0);
+
+    const views =
+        Number(data.views || 0);
+
+    const videos =
+        Number(data.videos || 0);
+
+    const averageViews =
+        videos > 0
+            ? views / videos
+            : 0;
+
+
+    const scenarios = [
+
+        [
+            "1% subscriber growth",
+            num(Math.round(subscribers * 1.01)),
+            "scenario"
+        ],
+
+        [
+            "5% subscriber growth",
+            num(Math.round(subscribers * 1.05)),
+            "scenario"
+        ],
+
+        [
+            "10% subscriber growth",
+            num(Math.round(subscribers * 1.10)),
+            "scenario"
+        ],
+
+        [
+            "100 more videos",
+            num(
+                Math.round(
+                    views +
+                    averageViews * 100
+                )
+            ),
+            "if average holds"
+        ],
+
+        [
+            "500 more videos",
+            num(
+                Math.round(
+                    views +
+                    averageViews * 500
+                )
+            ),
+            "if average holds"
+        ],
+
+        [
+            "1,000 more videos",
+            num(
+                Math.round(
+                    views +
+                    averageViews * 1000
+                )
+            ),
+            "if average holds"
+        ]
+    ];
+
+
+    container.innerHTML =
+        scenarios
+            .map(
+                ([title, value, note]) => `
+                    <div class="future-card">
+
+                        <span>
+                            ${esc(title)}
+                        </span>
+
+                        <strong>
+                            ${value}
+                        </strong>
+
+                        <span>
+                            ${esc(note)}
+                        </span>
+
+                    </div>
+                `
+            )
+            .join("");
+}
+
+
+/* =========================================================
+   VIEW SWITCHING
+   ========================================================= */
+
+function showView(view) {
+
+    document
+        .querySelectorAll(".view")
+        .forEach(element => {
+            element.classList.add("hidden");
+        });
+
+
+    const target =
+        $("view-" + view);
+
+    if (target) {
+        target.classList.remove("hidden");
+    }
+
+
+    document
+        .querySelectorAll(".nav-item")
+        .forEach(item => {
+
+            item.classList.toggle(
+                "active",
+                item.dataset.view === view
+            );
+
+        });
+}
+
+
+/* =========================================================
+   FOCUS SEARCH
+   ========================================================= */
+
+function focusSearch() {
+
+    const input = $("query");
+
+    if (!input) return;
+
+    input.focus();
+
+    input.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
+
+
+/* =========================================================
+   INITIALIZE
+   ========================================================= */
+
+const analyticsChannel = new URLSearchParams(window.location.search).get("channel");
+
+if (analyticsChannel && window.location.pathname.endsWith("/analytics.html")) {
+    fetch("/api/public/youtube/channel?query=" + encodeURIComponent(analyticsChannel))
+        .then(response => response.json().then(data => ({ ok: response.ok, data })))
+        .then(result => {
+            if (!result.ok) throw new Error(result.data.message || result.data.error || "Unable to load channel.");
+            currentChannel = result.data;
+            renderChannel(result.data);
+        })
+        .catch(error => console.error("CreatorStats analytics error:", error));
+}
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const analyzeButton = $("go");
+
+        const queryInput = $("query");
+
+        const focusButton = $("focusSearch");
+
+        const startButton = $("startSearch");
+
+
+        /* ---------------------------------------------
+           Analyze button
+        --------------------------------------------- */
+
+        if (analyzeButton) {
+
+            analyzeButton.addEventListener(
+                "click",
+                () => analyze()
+            );
+        }
+
+
+        /* ---------------------------------------------
+           Enter key
+        --------------------------------------------- */
+
+        if (queryInput) {
+
+            queryInput.addEventListener(
+                "keydown",
+                event => {
+
+                    if (event.key === "Enter") {
+
+                        event.preventDefault();
+
+                        analyze();
+                    }
+                }
+            );
+        }
+
+
+        /* ---------------------------------------------
+           Search buttons
+        --------------------------------------------- */
+
+        if (focusButton) {
+
+            focusButton.addEventListener(
+                "click",
+                focusSearch
+            );
+        }
+
+
+        if (startButton) {
+
+            startButton.addEventListener(
+                "click",
+                focusSearch
+            );
+        }
+
+
+        /* ---------------------------------------------
+           Dashboard navigation
+        --------------------------------------------- */
+
+        document
+            .querySelectorAll(".nav-item")
+            .forEach(item => {
+
+                item.addEventListener(
+                    "click",
+                    () => {
+
+                        if (!currentChannel) {
+
+                            focusSearch();
+
+                            return;
+                        }
+
+                        showView(
+                            item.dataset.view
+                        );
+                    }
+                );
+            });
+
+
+        /* ---------------------------------------------
+           Ctrl + K
+        --------------------------------------------- */
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    (event.ctrlKey || event.metaKey) &&
+                    event.key.toLowerCase() === "k"
+                ) {
+
+                    event.preventDefault();
+
+                    focusSearch();
+                }
+            }
+        );
+
+
+        /* ---------------------------------------------
+           Popular channel buttons
+        --------------------------------------------- */
+
+        document
+            .querySelectorAll(
+                ".view-analytics, .view-analytics-btn, .popular-analyze, .view-analytics"
+            )
+            .forEach(button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        const query =
+                            button.dataset.query;
+
+                        if (query) {
+                            analyze(query);
+                        } else {
+                            focusSearch();
+                        }
+                    }
+                );
+            });
+
+
+        /* ---------------------------------------------
+           Generic data-query buttons
+        --------------------------------------------- */
+
+        document
+            .querySelectorAll("[data-query]")
+            .forEach(button => {
+
+                if (
+                    button.id === "query" ||
+                    button.id === "go"
+                ) {
+                    return;
+                }
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        const query =
+                            button.dataset.query;
+
+                        if (query) {
+                            analyze(query);
+                        }
+                    }
+                );
+            });
+
+
+        /* ---------------------------------------------
+           Theme toggle
+        --------------------------------------------- */
+
+        const themeButton =
+            document.querySelector(
+                ".theme-toggle"
+            );
+
+        if (themeButton) {
+
+            themeButton.addEventListener(
+                "click",
+                () => {
+
+                    document.body.classList.toggle(
+                        "dark-mode"
+                    );
+
+                    localStorage.setItem(
+                        "creatorstats-theme",
+                        document.body.classList.contains(
+                            "dark-mode"
+                        )
+                            ? "dark"
+                            : "light"
+                    );
+                }
+            );
+        }
+
+
+        /* ---------------------------------------------
+           Restore theme
+        --------------------------------------------- */
+
+        const savedTheme =
+            localStorage.getItem(
+                "creatorstats-theme"
+            );
+
+        if (savedTheme === "dark") {
+
+            document.body.classList.add(
+                "dark-mode"
+            );
+        }
+
+
+        console.log(
+            "CreatorStats frontend initialized."
+        );
+    }
+);
+
+
+

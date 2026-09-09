@@ -13,3 +13,6 @@ server.log
 *-before-polish.*
 
 src/main/resources/static-backup-before-redesign/
+
+CreatorStats_Backup_*/
+src/main/resources/static/backup/

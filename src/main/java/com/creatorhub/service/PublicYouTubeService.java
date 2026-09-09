@@ -193,81 +193,190 @@ public class PublicYouTubeService {
     }
 
     public Map<String, Object> getVideos(String channelId)
-            throws Exception {
+        throws Exception {
 
-        String url =
+    String searchUrl =
+            UriComponentsBuilder
+                    .fromHttpUrl(
+                            "https://www.googleapis.com/youtube/v3/search"
+                    )
+                    .queryParam("part", "snippet")
+                    .queryParam("channelId", channelId)
+                    .queryParam("order", "date")
+                    .queryParam("type", "video")
+                    .queryParam("maxResults", 20)
+                    .queryParam("key", apiKey)
+                    .toUriString();
+
+    byte[] responseBytes =
+            restTemplate.getForObject(
+                    searchUrl,
+                    byte[].class
+            );
+
+    String response =
+            new String(
+                    responseBytes,
+                    StandardCharsets.UTF_8
+            );
+
+    JsonNode root =
+            objectMapper.readTree(response);
+
+    List<Map<String, Object>> videos =
+            new ArrayList<>();
+
+    for (JsonNode item : root.path("items")) {
+
+        JsonNode snippet = item.path("snippet");
+
+        String videoId =
+                item.path("id")
+                        .path("videoId")
+                        .asText("");
+
+        if (videoId.isBlank()) {
+            continue;
+        }
+
+        Map<String, Object> video =
+                new LinkedHashMap<>();
+
+        video.put(
+                "id",
+                videoId
+        );
+
+        video.put(
+                "title",
+                snippet.path("title").asText("")
+        );
+
+        video.put(
+                "thumbnail",
+                snippet.path("thumbnails")
+                        .path("medium")
+                        .path("url")
+                        .asText("")
+        );
+
+        video.put(
+                "publishedAt",
+                snippet.path("publishedAt").asText("")
+        );
+
+        /*
+         * Get duration from YouTube videos endpoint.
+         * ISO 8601 duration is returned, for example:
+         * PT45S = 45 seconds
+         * PT1M30S = 90 seconds
+         */
+        String detailsUrl =
                 UriComponentsBuilder
                         .fromHttpUrl(
-                                "https://www.googleapis.com/youtube/v3/search"
+                                "https://www.googleapis.com/youtube/v3/videos"
                         )
-                        .queryParam("part", "snippet")
-                        .queryParam("channelId", channelId)
-                        .queryParam("order", "date")
-                        .queryParam("type", "video")
-                        .queryParam("maxResults", 20)
+                        .queryParam("part", "contentDetails,statistics")
+                        .queryParam("id", videoId)
                         .queryParam("key", apiKey)
                         .toUriString();
 
-        byte[] responseBytes =
-                restTemplate.getForObject(
-                        url,
-                        byte[].class
-                );
+        try {
 
-        String response =
-                new String(
-                        responseBytes,
-                        StandardCharsets.UTF_8
-                );
+            String detailsResponse =
+                    restTemplate.getForObject(
+                            detailsUrl,
+                            String.class
+                    );
 
-        JsonNode root =
-                objectMapper.readTree(response);
+            JsonNode detailsRoot =
+                    objectMapper.readTree(detailsResponse);
 
-        List<Map<String, Object>> videos =
-                new ArrayList<>();
+            JsonNode detailItem =
+                    detailsRoot.path("items").path(0);
 
-        for (JsonNode item : root.path("items")) {
-
-            JsonNode snippet = item.path("snippet");
-
-            Map<String, Object> video =
-                    new LinkedHashMap<>();
+            String duration =
+                    detailItem.path("contentDetails")
+                            .path("duration")
+                            .asText("");
 
             video.put(
-                    "id",
-                    item.path("id")
-                            .path("videoId")
-                            .asText()
+                    "duration",
+                    duration
+            );
+
+            long durationSeconds =
+                    parseYouTubeDuration(duration);
+
+            video.put(
+                    "durationSeconds",
+                    durationSeconds
+            );
+
+            /*
+             * YouTube Shorts are normally short-form vertical videos.
+             * Duration alone cannot perfectly identify every Short,
+             * but <= 60 seconds is a useful first classification.
+             */
+            video.put(
+                    "isShort",
+                    durationSeconds > 0 && durationSeconds <= 60
+            );
+
+            JsonNode statistics =
+                    detailItem.path("statistics");
+
+            video.put(
+                    "views",
+                    statistics.path("viewCount").asLong(0)
             );
 
             video.put(
-                    "title",
-                    snippet.path("title").asText("")
+                    "likes",
+                    statistics.path("likeCount").asLong(0)
             );
 
-            video.put(
-                    "thumbnail",
-                    snippet.path("thumbnails")
-                            .path("medium")
-                            .path("url")
-                            .asText("")
-            );
+        } catch (Exception ignored) {
 
-            video.put(
-                    "publishedAt",
-                    snippet.path("publishedAt").asText("")
-            );
-
-            videos.add(video);
+            video.put("duration", "");
+            video.put("durationSeconds", 0);
+            video.put("isShort", false);
+            video.put("views", 0);
+            video.put("likes", 0);
         }
 
-        Map<String, Object> result =
-                new LinkedHashMap<>();
-
-        result.put("videos", videos);
-
-        return result;
+        videos.add(video);
     }
+
+    Map<String, Object> result =
+            new LinkedHashMap<>();
+
+    result.put(
+            "videos",
+            videos
+    );
+
+    return result;
+}
+
+private long parseYouTubeDuration(String duration) {
+
+    if (duration == null || duration.isBlank()) {
+        return 0;
+    }
+
+    try {
+
+        java.time.Duration parsed =
+                java.time.Duration.parse(duration);
+
+        return parsed.getSeconds();
+
+    } catch (Exception e) {
+
+        return 0;
+    }
+}
 
     private String calculateGrade(
             long subscribers,
@@ -321,5 +430,7 @@ public class PublicYouTubeService {
 
         return estimateMonthlyEarnings(totalViews) * 12;
     }
+    public Map<String, Object> getChannelWithoutSavingSnapshot(String query) throws Exception {
+        return getChannel(query);
+    }
 }
-

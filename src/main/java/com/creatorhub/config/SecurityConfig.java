@@ -33,6 +33,8 @@ public class SecurityConfig {
                     "/api/public/youtube/**",
                     "/",
                     "/index.html",
+                    "/login.html",
+        "/analytics.html",
                     "/favicon.ico",
                     "/favicon.svg",
                     "/error",
@@ -59,3 +61,4 @@ public class SecurityConfig {
         return source;
     }
 }
+

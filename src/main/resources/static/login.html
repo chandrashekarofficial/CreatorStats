@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — CreatorStats</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:#102a56;background:#f7fbff}
+    .page{min-height:100vh;display:grid;grid-template-columns:1.02fr .98fr}
+    .left{position:relative;overflow:hidden;padding:68px 7.5% 45px;background:linear-gradient(145deg,#edf8ff 0%,#e9f5ff 52%,#d9ecff 100%)}
+    .left:after{content:"";position:absolute;width:850px;height:330px;left:-180px;bottom:-175px;border-radius:50%;background:rgba(255,255,255,.55);transform:rotate(12deg)}
+    .brand{display:flex;align-items:center;gap:18px;position:relative;z-index:2}
+    .logo{width:72px;height:72px;flex:none}
+    .brand-name{font-size:40px;font-weight:800;letter-spacing:-1.8px;color:#102a56}
+    .brand-name span{color:#1685f7}
+    .tagline{font-size:18px;color:#45618e;margin-top:2px}
+    .hero{position:relative;z-index:2;margin-top:72px;max-width:650px}
+    h1{font-size:48px;line-height:1.08;letter-spacing:-2px;margin:0 0 24px;color:#0d2855}
+    h1 span{color:#1685f7}
+    .intro{font-size:20px;line-height:1.45;color:#49658f;max-width:590px;margin:0}
+    .mockup-wrap{position:relative;z-index:2;margin:45px auto 35px;max-width:690px}
+    .mockup{background:white;border:8px solid #1888ed;border-radius:18px 18px 8px 8px;box-shadow:0 18px 40px rgba(27,105,181,.22);padding:14px;height:315px;overflow:hidden}
+    .mock-top{height:28px;border-bottom:1px solid #e7eff8;display:flex;align-items:center;font-size:9px;font-weight:700}
+    .mini-logo{width:18px;height:18px;margin-right:5px}
+    .mock-body{display:grid;grid-template-columns:125px 1fr;gap:13px;height:260px;padding-top:12px}
+    .side{border-right:1px solid #edf2f7;padding:8px}
+    .side div{font-size:10px;padding:9px 6px;color:#52709a;border-radius:6px}
+    .side .active{background:#e9f4ff;color:#1685f7;font-weight:700}
+    .dash{padding:4px}
+    .profile{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .avatar{width:38px;height:38px;border-radius:50%;background:#102a56;display:grid;place-items:center;color:#fff;font-weight:800}
+    .profile b{font-size:12px}.profile small{display:block;color:#7790b0;font-size:8px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+    .stat{border:1px solid #e5edf6;border-radius:7px;padding:8px}.stat small{font-size:7px;color:#6d85a3}.stat b{display:block;font-size:11px;margin-top:3px}.up{font-size:7px;color:#18b98a}
+    .charts{display:grid;grid-template-columns:1.4fr .9fr;gap:8px;margin-top:9px}
+    .chart{height:112px;border:1px solid #e7eef6;border-radius:7px;padding:9px}.chart b{font-size:8px}
+    .line{height:68px;margin-top:10px;background:linear-gradient(180deg,rgba(22,133,247,.08),transparent);clip-path:polygon(0 82%,10% 72%,20% 76%,30% 57%,40% 65%,50% 42%,60% 52%,70% 25%,78% 38%,88% 12%,94% 28%,100% 17%,100% 100%,0 100%)}
+    .countries p{font-size:7px;margin:8px 0;color:#607b9d}
+    .features{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;position:relative;z-index:2}
+    .feature{text-align:center;color:#17365f}.feature-icon{width:54px;height:54px;margin:0 auto 10px;border-radius:50%;background:#eaf5ff;display:grid;place-items:center;color:#1685f7;font-size:22px;font-weight:700}.feature div{font-size:15px;line-height:1.25}
+    .right{display:flex;align-items:center;justify-content:center;padding:45px 7%;background:#fbfdff}
+    .card{width:min(560px,100%);background:#fff;border:1px solid #e2ebf5;border-radius:18px;box-shadow:0 12px 38px rgba(24,67,110,.08);padding:42px 44px}
+    .login-brand{text-align:center}.login-brand .logo{width:70px;height:70px}.login-name{font-size:38px;font-weight:800;letter-spacing:-1.5px;margin-top:7px}.login-name span{color:#1685f7}.login-tag{font-size:17px;color:#536d96}
+    h2{text-align:center;font-size:32px;margin:44px 0 8px;color:#0e2854}.sub{text-align:center;color:#60789c;font-size:17px;margin:0 0 40px}
+    label{display:block;font-size:15px;font-weight:700;margin:0 0 9px;color:#233e69}
+    .field{position:relative;margin-bottom:22px}.field input{width:100%;height:54px;border:1px solid #ccd9e8;border-radius:11px;padding:0 48px;font-size:15px;outline:none;color:#19355f}.field input:focus{border-color:#1685f7;box-shadow:0 0 0 3px rgba(22,133,247,.1)}.field .ico{position:absolute;left:16px;top:17px;color:#6682a7;font-size:19px}.toggle{position:absolute;right:15px;top:16px;border:0;background:none;color:#60799d;cursor:pointer;font-size:17px}
+    .forgot{text-align:right;margin:-6px 0 23px}.forgot a,.signup a{color:#087cf0;text-decoration:none;font-weight:700}
+    .signin{width:100%;height:55px;border:0;border-radius:11px;background:#1685f7;color:#fff;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 8px 18px rgba(22,133,247,.2)}.signin:disabled{opacity:.7;cursor:wait}
+    .or{display:flex;align-items:center;gap:14px;margin:27px 0;color:#7890ae;font-size:14px}.or:before,.or:after{content:"";height:1px;background:#e1e8f1;flex:1}
+    .google{width:100%;height:54px;background:#fff;border:1px solid #ccd9e8;border-radius:11px;color:#203b64;font-size:16px;font-weight:700;cursor:pointer}.google b{font-size:20px;color:#4285f4;margin-right:9px}
+    .signup{text-align:center;margin:35px 0 0;color:#637b9d;font-size:15px}
+    .error{display:none;background:#fff1f1;color:#c53b3b;border:1px solid #f2c8c8;border-radius:9px;padding:10px 12px;margin-bottom:18px;font-size:14px}
+    .copyright{text-align:center;color:#6680a4;font-size:13px;margin-top:42px}
+    @media(max-width:1050px){.page{grid-template-columns:1fr}.left{padding:45px 7%;}.hero{margin-top:50px}.right{padding:55px 7%}.mockup{max-width:650px;margin-left:auto;margin-right:auto}.card{max-width:560px}}
+    @media(max-width:650px){.left{padding:32px 24px}.brand-name{font-size:30px}.tagline{font-size:14px}.logo{width:58px;height:58px}.hero{margin-top:45px}h1{font-size:38px}.intro{font-size:17px}.mockup-wrap{display:none}.features{grid-template-columns:repeat(2,1fr);gap:18px;margin-top:35px}.right{padding:35px 18px}.card{padding:32px 22px;border-radius:14px}.login-name{font-size:31px}h2{font-size:27px;margin-top:35px}.sub{font-size:15px}}
+  </style>
+</head>
+<body>
+<div class="page">
+  <section class="left">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="39" fill="none" stroke="#1685F7" stroke-width="13"/><rect x="78" y="34" width="17" height="32" fill="#E9F5FF"/><path d="M39 29 L68 50 L39 71 Z" fill="#102F63"/></svg>
+      <div><div class="brand-name">Creator<span>Stats</span></div><div class="tagline">Manage. Analyze. Grow.</div></div>
+    </div>
+
+    <div class="hero">
+      <h1>Turn YouTube Data into <span>Real Growth Insights</span></h1>
+      <p class="intro">Track your channel performance, discover trends, and get actionable insights to grow your audience faster.</p>
+    </div>
+
+    <div class="mockup-wrap">
+      <div class="mockup">
+        <div class="mock-top"><svg class="mini-logo" viewBox="0 0 100 100"><circle cx="50" cy="50" r="39" fill="none" stroke="#1685F7" stroke-width="13"/><path d="M39 29 L68 50 L39 71 Z" fill="#102F63"/></svg>CreatorStats</div>
+        <div class="mock-body">
+          <div class="side"><div class="active">⌂ Dashboard</div><div>▣ Videos</div><div>⌕ Analytics</div><div>▤ SEO</div><div>▧ Reports</div></div>
+          <div class="dash">
+            <div class="profile"><div class="avatar">C</div><div><b>Crzieo ✓</b><small>@crzieo</small></div></div>
+            <div class="stats"><div class="stat"><small>Total Views</small><b>481.2M</b><span class="up">↑ 12.9%</span></div><div class="stat"><small>Watch Time</small><b>12.8M</b><span class="up">↑ 14.2%</span></div><div class="stat"><small>Subscribers</small><b>1.23M</b><span class="up">↑ 8.7%</span></div><div class="stat"><small>Est. Earnings</small><b>$3.2K</b><span class="up">↑ 11.3%</span></div></div>
+            <div class="charts"><div class="chart"><b>Views Last 28 Days</b><div class="line"></div></div><div class="chart countries"><b>Top Countries</b><p>🇺🇸 United States　38.2%</p><p>🇮🇳 India　5.1%</p><p>🇬🇧 United Kingdom　4.4%</p><p>🇵🇭 Philippines　3.6%</p></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature"><div class="feature-icon">▮▮</div><div>Track<br>Performance</div></div>
+      <div class="feature"><div class="feature-icon">⌕</div><div>Discover<br>Trends</div></div>
+      <div class="feature"><div class="feature-icon">♧</div><div>Get AI-Powered<br>Insights</div></div>
+      <div class="feature"><div class="feature-icon">↗</div><div>Grow Faster</div></div>
+    </div>
+  </section>
+
+  <section class="right">
+    <div>
+      <div class="card">
+        <div class="login-brand">
+          <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="39" fill="none" stroke="#1685F7" stroke-width="13"/><rect x="78" y="34" width="17" height="32" fill="white"/><path d="M39 29 L68 50 L39 71 Z" fill="#102F63"/></svg>
+          <div class="login-name">Creator<span>Stats</span></div>
+          <div class="login-tag">Manage. Analyze. Grow.</div>
+        </div>
+
+        <h2>Welcome Back</h2>
+        <p class="sub">Sign in to your CreatorStats account</p>
+        <div id="error" class="error"></div>
+
+        <form id="loginForm">
+          <label for="email">Email Address</label>
+          <div class="field"><span class="ico">✉</span><input id="email" type="email" autocomplete="email" placeholder="Enter your email" required></div>
+
+          <label for="password">Password</label>
+          <div class="field"><span class="ico">♙</span><input id="password" type="password" autocomplete="current-password" placeholder="Enter your password" required><button type="button" class="toggle" id="togglePassword" aria-label="Show password">◉</button></div>
+
+          <div class="forgot"><a href="#" id="forgotLink">Forgot password?</a></div>
+          <button class="signin" id="signinBtn" type="submit">♙ &nbsp; Sign In</button>
+        </form>
+
+        <div class="or"><span>OR</span></div>
+        <button class="google" type="button" id="googleBtn"><b>G</b> Continue with Google</button>
+        <div class="signup">Don't have an account? &nbsp;<a href="/register.html">Sign Up</a></div>
+      </div>
+      <div class="copyright">© 2025 CreatorStats. All rights reserved.</div>
+    </div>
+  </section>
+</div>
+
+<script>
+"use strict";
+
+const form = document.getElementById("loginForm");
+const errorBox = document.getElementById("error");
+const button = document.getElementById("signinBtn");
+
+document.getElementById("togglePassword").addEventListener("click", function(){
+  const input = document.getElementById("password");
+  const visible = input.type === "text";
+  input.type = visible ? "password" : "text";
+  this.textContent = visible ? "◉" : "◎";
+});
+
+form.addEventListener("submit", async function(e){
+  e.preventDefault();
+  errorBox.style.display = "none";
+  button.disabled = true;
+  button.textContent = "Signing in...";
+
+  try {
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("password").value
+      })
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.message || data.error || "Invalid email or password.");
+
+    const token = data.token || data.accessToken || data.jwt;
+    if (token) {
+      localStorage.setItem("creatorstats_token", token);
+      localStorage.setItem("token", token);
+    }
+
+    window.location.href = "/";
+  } catch (err) {
+    errorBox.textContent = err.message || "Unable to sign in.";
+    errorBox.style.display = "block";
+  } finally {
+    button.disabled = false;
+    button.textContent = "♙  Sign In";
+  }
+});
+
+document.getElementById("googleBtn").addEventListener("click", function(){
+  errorBox.textContent = "Google sign-in is not connected yet.";
+  errorBox.style.display = "block";
+});
+
+document.getElementById("forgotLink").addEventListener("click", function(e){
+  e.preventDefault();
+  errorBox.textContent = "Password reset is not connected yet.";
+  errorBox.style.display = "block";
+});
+</script>
+</body>
+</html>
