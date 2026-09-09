@@ -133,6 +133,7 @@
 let channelData=null;
 let videosData=[];
 let historyData=[];
+let favoriteChannels=[];
 const q=new URLSearchParams(location.search).get("channel");
 const $=id=>document.getElementById(id);
 const num=n=>{n=Number(n||0);if(n>=1e9)return(n/1e9).toFixed(2).replace(/\.00$/,'')+'B';if(n>=1e6)return(n/1e6).toFixed(2).replace(/\.00$/,'')+'M';if(n>=1e3)return(n/1e3).toFixed(2).replace(/\.00$/,'')+'K';return n.toLocaleString()};
@@ -141,21 +142,51 @@ const duration=s=>{s=Number(s||0);if(!s)return'—';return Math.floor(s/60)+':'+
 const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 function token(){return localStorage.getItem('creatorstats_token')||localStorage.getItem('token')}
 function signedIn(){return !!token()}
+function authHeaders(){return {Authorization:'Bearer '+token(),'Content-Type':'application/json'}}
 function requireLogin(){location.href='/login.html?returnTo='+encodeURIComponent(location.pathname+location.search)}
-function openFavorites(){if(!signedIn()){requireLogin();return} alert('Favorites will open here. The account-backed favorites service is the next coding step.')}
-function openProfileArea(area){if(!signedIn()){requireLogin();return} closeProfileMenu(); alert(area==='history'?'History will open here.':'Settings will open here.')}
+function openFavorites(){if(!signedIn()){requireLogin();return}location.href='/favorites.html'}
+function openProfileArea(area){if(!signedIn()){requireLogin();return}closeProfileMenu();if(area==='history')location.href='/history.html';else if(area==='settings')location.href='/settings.html'}
 function toggleProfileMenu(){if(!signedIn()){requireLogin();return}const m=$('profileMenu');m.classList.toggle('open')}
 function closeProfileMenu(){$('profileMenu')?.classList.remove('open')}
-function toggleFavorite(){if(!signedIn()){requireLogin();return}alert('Favorite saving will be connected to your account in the next backend step.')}
+async function loadFavorites(){
+ if(!signedIn()){favoriteChannels=[];updateFavoriteButton();return}
+ try{
+  const r=await fetch('/api/favorites',{headers:{Authorization:'Bearer '+token()}});
+  if(r.status===401||r.status===403){favoriteChannels=[];updateFavoriteButton();return}
+  if(!r.ok)throw new Error('Unable to load favorites.');
+  const data=await r.json();favoriteChannels=Array.isArray(data)?data:[];updateFavoriteButton();
+ }catch(e){console.warn('Favorites:',e.message)}
+}
+function updateFavoriteButton(){const b=$('favoriteButton');if(!b||!channelData)return;const id=channelData.channelId;const saved=favoriteChannels.some(f=>String(f.channelId)===String(id));b.textContent=saved?'★ Remove Favorite':'☆ Add Favorite';b.classList.toggle('saved',saved);b.title=saved?'Remove this channel from Favorites':'Save this channel to Favorites'}
+async function toggleFavorite(){
+ if(!signedIn()){requireLogin();return}
+ if(!channelData?.channelId)return;
+ const saved=favoriteChannels.some(f=>String(f.channelId)===String(channelData.channelId));
+ const b=$('favoriteButton');if(b)b.disabled=true;
+ try{
+  if(saved){
+   const r=await fetch('/api/favorites/'+encodeURIComponent(channelData.channelId),{method:'DELETE',headers:{Authorization:'Bearer '+token()}});
+   if(!r.ok)throw new Error('Unable to remove favorite.');
+   favoriteChannels=favoriteChannels.filter(f=>String(f.channelId)!==String(channelData.channelId));
+  }else{
+   const payload={channelId:channelData.channelId,title:channelData.title||'YouTube Channel',handle:channelData.handle||null,thumbnail:channelData.thumbnail||null,youtubeUrl:channelData.youtubeUrl||('https://www.youtube.com/channel/'+channelData.channelId)};
+   const r=await fetch('/api/favorites',{method:'POST',headers:authHeaders(),body:JSON.stringify(payload)});
+   let body={};try{body=await r.json()}catch{}
+   if(!r.ok)throw new Error(body.message||'Unable to add favorite.');
+   favoriteChannels.push(body);
+  }
+  updateFavoriteButton();
+ }catch(e){alert(e.message||'Unable to update favorite.')}finally{if(b)b.disabled=false}
+}
 function scrollToSection(id){const el=$(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
 async function load(){
  if(!q){$('loading').textContent='No channel selected. Return to the home page and analyze a channel.';return}
  try{
-  const r=await fetch('/api/public/youtube/channel?query='+encodeURIComponent(q));const d=await r.json();if(!r.ok)throw new Error(d.message||d.error||'Unable to load channel');channelData=d;videosData=Array.isArray(d.recentVideos)?d.recentVideos:[];renderChannel();await loadHistory();$('loading').classList.add('hidden-section');$('dashboard').classList.remove('hidden-section');
+  const r=await fetch('/api/public/youtube/channel?query='+encodeURIComponent(q));const d=await r.json();if(!r.ok)throw new Error(d.message||d.error||'Unable to load channel');channelData=d;videosData=Array.isArray(d.recentVideos)?d.recentVideos:[];renderChannel();await Promise.all([loadHistory(),loadFavorites()]);$('loading').classList.add('hidden-section');$('dashboard').classList.remove('hidden-section');
  }catch(e){$('loading').textContent=e.message||'Unable to load channel analytics.'}
 }
 function renderChannel(){
- const d=channelData; $('name').textContent=d.title||'YouTube Channel';$('handle').textContent=d.handle||'@channel';$('meta').textContent=num(d.subscribers)+' subscribers · '+num(d.videos)+' videos';$('avatar').src=d.thumbnail||'';if(d.banner){$('banner').src=d.banner}else $('bannerBox').innerHTML='<div style="height:100%;display:grid;place-items:center;color:#7690b0;font-weight:700">CreatorStats Channel Analytics</div>';$('subs').textContent=d.hiddenSubscribers?'Hidden':num(d.subscribers);$('views').textContent=num(d.views);$('videos').textContent=num(d.videos);$('avg').textContent=num(d.averageViews);$('grade').textContent=d.grade||'—';$('created').textContent=date(d.publishedAt);$('country').textContent=d.country||'Not public';$('cid').textContent=d.channelId||'—';$('yt').href=d.youtubeUrl||('https://www.youtube.com/channel/'+d.channelId);$('liveSubs').textContent=d.hiddenSubscribers?'Hidden':num(d.subscribers);renderPerformance();renderVideos();renderAchievements();updateAuthUI();
+ const d=channelData; $('name').textContent=d.title||'YouTube Channel';$('handle').textContent=d.handle||'@channel';$('meta').textContent=num(d.subscribers)+' subscribers · '+num(d.videos)+' videos';$('avatar').src=d.thumbnail||'';if(d.banner){$('banner').src=d.banner}else $('bannerBox').innerHTML='<div style="height:100%;display:grid;place-items:center;color:#7690b0;font-weight:700">CreatorStats Channel Analytics</div>';$('subs').textContent=d.hiddenSubscribers?'Hidden':num(d.subscribers);$('views').textContent=num(d.views);$('videos').textContent=num(d.videos);$('avg').textContent=num(d.averageViews);$('grade').textContent=d.grade||'—';$('created').textContent=date(d.publishedAt);$('country').textContent=d.country||'Not public';$('cid').textContent=d.channelId||'—';$('yt').href=d.youtubeUrl||('https://www.youtube.com/channel/'+d.channelId);$('liveSubs').textContent=d.hiddenSubscribers?'Hidden':num(d.subscribers);renderPerformance();renderVideos();renderAchievements();updateAuthUI();updateFavoriteButton();
 }
 function renderPerformance(){const c=$('performanceChart');const list=videosData.slice(0,12).reverse();if(!list.length){c.innerHTML='<div class="empty-state">No recent video data.</div>';return}const max=Math.max(...list.map(v=>Number(v.views||0)),1);c.innerHTML=list.map(v=>'<div class="chart-bar" style="height:'+Math.max(8,Number(v.views||0)/max*92)+'%"><span>'+num(v.views)+'</span></div>').join('')}
 function renderVideos(){const search=($('videoSearch')?.value||'').toLowerCase();const filter=$('videoFilter')?.value||'all';const sort=$('videoSort')?.value||'latest';let list=videosData.filter(v=>(v.title||'').toLowerCase().includes(search));list=list.filter(v=>filter==='all'||(filter==='short'?!!v.isShort:!v.isShort));list.sort((a,b)=>sort==='views'?Number(b.views||0)-Number(a.views||0):sort==='likes'?Number(b.likes||0)-Number(a.likes||0):sort==='comments'?Number(b.comments||0)-Number(a.comments||0):new Date(b.publishedAt)-new Date(a.publishedAt));if(!list.length){$('videoGrid').innerHTML='<div class="empty-state">No videos match your filters.</div>';return}$('videoGrid').innerHTML=list.map(v=>{const engagement=Number(v.views)>0?(((Number(v.likes||0)+Number(v.comments||0))/Number(v.views))*100).toFixed(2):'0.00';return '<article class="video-card"><div class="video-thumb"><img src="'+esc(v.thumbnail||'')+'" alt="" loading="lazy"><span class="video-type">'+(v.isShort?'Short':'Video')+(v.durationSeconds?' · '+duration(v.durationSeconds):'')+'</span></div><div class="video-card-body"><div class="video-card-title">'+esc(v.title||'Untitled video')+'</div><div class="video-date">'+date(v.publishedAt)+'</div><div class="video-stats"><div class="video-stat"><span>Views</span><strong>'+num(v.views)+'</strong></div><div class="video-stat"><span>Likes</span><strong>'+num(v.likes)+'</strong></div><div class="video-stat"><span>Comments</span><strong>'+num(v.comments)+'</strong></div><div class="video-stat"><span>Engagement</span><strong>'+engagement+'%</strong></div></div><a class="video-link" href="https://www.youtube.com/watch?v='+encodeURIComponent(v.id)+'" target="_blank" rel="noopener">Watch on YouTube ↗</a></div></article>'}).join('')}
