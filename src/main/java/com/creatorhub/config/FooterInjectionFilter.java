@@ -1,6 +1,7 @@
 package com.creatorhub.config;
 
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +24,7 @@ public class FooterInjectionFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain) throws IOException {
+                                    FilterChain filterChain) throws IOException, ServletException {
         BufferedResponse wrapped = new BufferedResponse(response);
         filterChain.doFilter(request, wrapped);
 
