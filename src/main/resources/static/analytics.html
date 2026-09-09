@@ -1,187 +1,166 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CreatorStats — Analytics</title><link rel="stylesheet" href="/css/app.css"></head><body><main class="analytics-page"><div style="max-width:1200px;margin:20px auto;padding:0 20px"><a href="/" style="text-decoration:none;font-weight:700">← CreatorStats</a></div><section id="dash" class="results-section hide">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorStats — Channel Analytics</title>
+<link rel="stylesheet" href="/css/analytics.css">
+</head>
+<body>
+<div class="analytics-shell">
+  <aside class="quick-rail">
+    <a class="rail-logo" href="/"><img src="/images/creatorstats-logo.png" alt="CreatorStats"></a>
+    <button class="rail-btn active" title="Home" onclick="location.href='/'">⌂</button>
+    <button class="rail-btn" title="Favorites" onclick="openFavorites()">★</button>
+    <button class="rail-btn" title="History" onclick="openProfileArea('history')">◷</button>
+    <div class="rail-spacer"></div>
+    <button class="rail-btn" title="Profile" onclick="toggleProfileMenu()">●</button>
+  </aside>
 
-    <div class="section-container">
-
-        <div class="results-header">
-
-            <div>
-                <span class="section-eyebrow">
-                    CHANNEL ANALYSIS
-                </span>
-
-                <h2>Your YouTube Channel</h2>
-            </div>
-
-            <a
-                id="yt"
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="youtube-link"
-            >
-                View on YouTube ↗
-            </a>
-
-        </div>
-
-
-        <!-- Channel -->
-        <div class="result-channel-card">
-
-            <div class="result-channel-left">
-
-                <img
-                    id="avatar"
-                    src=""
-                    alt="Channel avatar"
-                    class="result-avatar"
-                >
-
-                <div>
-                    <h2 id="name">Channel</h2>
-                    <span id="handle">@channel</span>
-                    <p id="meta">Channel information</p>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- Metrics -->
-        <div class="result-metrics">
-
-            <article>
-                <span>Subscribers</span>
-                <strong id="subs">—</strong>
-                <small>Public count</small>
-            </article>
-
-            <article>
-                <span>Total Views</span>
-                <strong id="views">—</strong>
-                <small>Channel lifetime</small>
-            </article>
-
-            <article>
-                <span>Videos</span>
-                <strong id="videos">—</strong>
-                <small>Published videos</small>
-            </article>
-
-            <article>
-                <span>Avg. Views / Video</span>
-                <strong id="avg">—</strong>
-                <small>Simple average</small>
-            </article>
-
-        </div>
-
-
-        <div class="results-grid">
-
-            <article class="result-panel">
-
-                <div class="panel-heading">
-                    <div>
-                        <h3>Recent Video Performance</h3>
-                        <span>Latest uploads</span>
-                    </div>
-                </div>
-
-                <div id="bars" class="bars"></div>
-
-            </article>
-
-
-            <article class="result-panel">
-
-                <div class="panel-heading">
-                    <div>
-                        <h3>Channel Snapshot</h3>
-                        <span>Public information</span>
-                    </div>
-                </div>
-
-                <div class="snapshot">
-
-                    <div>
-                        <span>Created</span>
-                        <strong id="created">—</strong>
-                    </div>
-
-                    <div>
-                        <span>Country</span>
-                        <strong id="country">—</strong>
-                    </div>
-
-                    <div>
-                        <span>Channel ID</span>
-                        <strong id="cid">—</strong>
-                    </div>
-
-                    <div>
-                        <span>Data source</span>
-                        <strong>YouTube Data API</strong>
-                    </div>
-
-                </div>
-
-            </article>
-
-        </div>
-
+  <header class="analytics-topbar">
+    <a class="analytics-brand" href="/">
+      <img src="/images/creatorstats-logo.png" alt="CreatorStats">
+      <div><strong>CreatorStats</strong><span>Manage. Analyze. Grow.</span></div>
+    </a>
+    <div class="top-actions">
+      <a class="top-btn" href="/">New Analysis</a>
+      <a id="guestSignIn" class="top-btn signin-btn" href="/login.html">Sign In</a>
+      <button id="profileButton" class="top-btn profile-btn" onclick="toggleProfileMenu()"><span class="profile-dot">U</span><span>Profile</span></button>
     </div>
+  </header>
 
-</section>
+  <main class="dashboard-main">
+    <div id="loading" class="panel loading-state">Loading channel analytics...</div>
 
-
-<!-- =========================================================
-     ABOUT
-========================================================= -->
-<section class="about-section" id="about">
-
-    <div class="section-container">
-
-        <div class="about-card">
-
-            <div class="about-logo">
-                <svg viewBox="0 0 64 64">
-                    <circle
-                        cx="32"
-                        cy="32"
-                        r="26"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="7"
-                    />
-                    <path
-                        d="M27 20 L45 32 L27 44 Z"
-                        fill="currentColor"
-                    />
-                </svg>
-            </div>
-
+    <section id="dashboard" class="hidden-section">
+      <div class="channel-hero section-anchor" id="channelOverview">
+        <div class="channel-banner" id="bannerBox"><img id="banner" alt="Channel banner"></div>
+        <div class="channel-body">
+          <img id="avatar" class="channel-avatar" alt="Channel avatar">
+          <div class="channel-main">
             <div>
-                <span class="section-eyebrow">
-                    ABOUT CREATORSTATS
-                </span>
-
-                <h2>
-                    Better insights. Bigger growth.
-                </h2>
-
-                <p>
-                    CreatorStats is built to make YouTube analytics
-                    easier to understand. Analyze channels, explore
-                    performance and turn data into useful growth insights.
-                </p>
+              <div class="channel-title-row"><h1 id="name">Channel</h1><span id="verified"></span></div>
+              <div id="handle" class="handle">@channel</div>
+              <p id="meta" class="channel-meta">YouTube channel</p>
             </div>
-
+            <div class="channel-actions">
+              <a id="yt" class="action-btn primary" href="#" target="_blank" rel="noopener">View on YouTube ↗</a>
+              <button class="action-btn" onclick="refreshChannel()">↻ Refresh Stats</button>
+              <button id="favoriteButton" class="action-btn favorite-btn" onclick="toggleFavorite()">☆ Add Favorite</button>
+            </div>
+          </div>
+          <nav class="channel-tabs">
+            <button class="channel-tab active" onclick="scrollToSection('channelOverview')">Channel Statistics</button>
+            <button class="channel-tab" onclick="scrollToSection('videoStatistics')">Video Statistics</button>
+            <button class="channel-tab" onclick="scrollToSection('futureProjections')">Future Projections</button>
+            <button class="channel-tab" onclick="scrollToSection('liveCount')">Live Subscriber Count</button>
+            <button class="channel-tab" onclick="scrollToSection('achievements')">Achievements</button>
+          </nav>
         </div>
+      </div>
 
-    </div>
+      <div class="metrics-grid">
+        <article class="metric-card"><span class="metric-label">Subscribers</span><strong id="subs" class="metric-value">—</strong><span class="metric-note">Public count</span></article>
+        <article class="metric-card"><span class="metric-label">Total Views</span><strong id="views" class="metric-value">—</strong><span class="metric-note">Channel lifetime</span></article>
+        <article class="metric-card"><span class="metric-label">Videos</span><strong id="videos" class="metric-value">—</strong><span class="metric-note">Published videos</span></article>
+        <article class="metric-card"><span class="metric-label">Average Views</span><strong id="avg" class="metric-value">—</strong><span class="metric-note">Views per video</span></article>
+      </div>
 
-</section>
+      <div class="content-grid">
+        <article class="panel">
+          <div class="panel-head"><div><h2>Channel Performance</h2><p>Recent public video performance</p></div><div id="grade" class="grade">—</div></div>
+          <div id="performanceChart" class="chart-box"></div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><h2>Channel Snapshot</h2><p>Public channel information</p></div></div>
+          <div class="snapshot-grid">
+            <div class="snapshot-item"><span>Created</span><strong id="created">—</strong></div>
+            <div class="snapshot-item"><span>Country</span><strong id="country">—</strong></div>
+            <div class="snapshot-item"><span>Channel ID</span><strong id="cid">—</strong></div>
+            <div class="snapshot-item"><span>Data source</span><strong>YouTube Data API</strong></div>
+          </div>
+        </article>
+      </div>
 
-</main><script src="/js/app.js"></script></body></html>
+      <section class="growth-grid">
+        <article class="panel section-anchor" id="subscriberGrowth"><div class="panel-head"><div><h2>Subscriber Growth</h2><p>Stored daily public snapshots</p></div></div><div id="subscriberChart" class="chart-box"></div></article>
+        <article class="panel section-anchor" id="viewGrowth"><div class="panel-head"><div><h2>View Growth</h2><p>Stored daily public snapshots</p></div></div><div id="viewChart" class="chart-box"></div></article>
+      </section>
+
+      <section class="panel section-anchor" id="dailyMetrics" style="margin-top:16px">
+        <div class="panel-head"><div><h2>Daily Channel Metrics</h2><p>Actual stored CreatorStats snapshots</p></div></div>
+        <div style="overflow:auto"><table class="daily-table"><thead><tr><th>Date</th><th>Subscribers</th><th>Views</th><th>Videos</th></tr></thead><tbody id="dailyBody"></tbody></table></div>
+      </section>
+
+      <section class="panel video-section section-anchor" id="videoStatistics">
+        <div class="panel-head"><div><h2>Video Statistics</h2><p>Recent videos and Shorts with public YouTube metrics</p></div></div>
+        <div class="video-toolbar"><input id="videoSearch" class="video-search" placeholder="Search videos..." oninput="renderVideos()"><select id="videoFilter" class="video-select" onchange="renderVideos()"><option value="all">All</option><option value="video">Videos</option><option value="short">Shorts</option></select><select id="videoSort" class="video-select" onchange="renderVideos()"><option value="latest">Latest</option><option value="views">Most Viewed</option><option value="likes">Most Liked</option><option value="comments">Most Commented</option></select></div>
+        <div id="videoGrid" class="video-grid"></div>
+      </section>
+
+      <section class="panel section-anchor" id="futureProjections" style="margin-top:16px">
+        <div class="panel-head"><div><h2>Future Projections</h2><p id="projectionNote">CreatorStats estimates based on stored historical data.</p></div></div>
+        <div id="projectionGrid" class="projection-grid"></div>
+      </section>
+
+      <section class="panel section-anchor" id="liveCount" style="margin-top:16px">
+        <div class="panel-head"><div><h2>Live Subscriber Count</h2><p>Latest public count from YouTube</p></div></div>
+        <div id="liveSubs" class="live-number">—</div>
+        <p id="liveUpdated" style="color:var(--cs-muted);font-size:13px">Updated when the page is refreshed.</p>
+      </section>
+
+      <section class="panel section-anchor" id="achievements" style="margin-top:16px">
+        <div class="panel-head"><div><h2>Achievements</h2><p>Milestones based only on public channel totals</p></div></div>
+        <div id="achievementGrid" class="achievement-grid"></div>
+      </section>
+
+      <section class="compare-box" id="compareBox">
+        <h3>Compare Channel</h3>
+        <p style="color:var(--cs-muted);margin:4px 0 12px">Compare another channel from your Favorites area.</p>
+        <button class="action-btn primary" onclick="openFavorites()">Open Favorites</button>
+      </section>
+    </section>
+  </main>
+</div>
+
+<script>
+"use strict";
+let channelData=null;
+let videosData=[];
+let historyData=[];
+const q=new URLSearchParams(location.search).get("channel");
+const $=id=>document.getElementById(id);
+const num=n=>{n=Number(n||0);if(n>=1e9)return(n/1e9).toFixed(2).replace(/\.00$/,'')+'B';if(n>=1e6)return(n/1e6).toFixed(2).replace(/\.00$/,'')+'M';if(n>=1e3)return(n/1e3).toFixed(2).replace(/\.00$/,'')+'K';return n.toLocaleString()};
+const date=v=>v?new Date(v).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}):'—';
+const duration=s=>{s=Number(s||0);if(!s)return'—';return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+function token(){return localStorage.getItem('creatorstats_token')||localStorage.getItem('token')}
+function signedIn(){return !!token()}
+function authHeaders(){const t=token();return t?{Authorization:'Bearer '+t}:{} }
+function requireLogin(){location.href='/login.html?returnTo='+encodeURIComponent(location.pathname+location.search)}
+function openFavorites(){if(!signedIn()){requireLogin();return} alert('Favorites area is ready for the signed-in account. The next step will connect saved channels here.');}
+function openProfileArea(area){if(!signedIn()){requireLogin();return} alert(area==='history'?'History area is available for your signed-in account.':'Profile area is available for your signed-in account.')}
+function toggleProfileMenu(){if(!signedIn()){requireLogin();return} openProfileArea('profile')}
+function toggleFavorite(){if(!signedIn()){requireLogin();return} alert('Favorite saving will be connected to your account in the next backend step.')}
+function scrollToSection(id){const el=$(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
+async function load(){
+ if(!q){$('loading').textContent='No channel selected. Return to the home page and analyze a channel.';return}
+ try{
+  const r=await fetch('/api/public/youtube/channel?query='+encodeURIComponent(q));const d=await r.json();if(!r.ok)throw new Error(d.message||d.error||'Unable to load channel');channelData=d;videosData=Array.isArray(d.recentVideos)?d.recentVideos:[];renderChannel();await loadHistory();$('loading').classList.add('hidden-section');$('dashboard').classList.remove('hidden-section');
+ }catch(e){$('loading').textContent=e.message||'Unable to load channel analytics.'}
+}
+function renderChannel(){
+ const d=channelData; $('name').textContent=d.title||'YouTube Channel';$('handle').textContent=d.handle||'@channel';$('meta').textContent=num(d.subscribers)+' subscribers · '+num(d.videos)+' videos';$('avatar').src=d.thumbnail||'';if(d.banner){$('banner').src=d.banner}else $('bannerBox').innerHTML='<div style="height:100%;display:grid;place-items:center;color:#7690b0;font-weight:700">CreatorStats Channel Analytics</div>';$('subs').textContent=d.hiddenSubscribers?'Hidden':num(d.subscribers);$('views').textContent=num(d.views);$('videos').textContent=num(d.videos);$('avg').textContent=num(d.averageViews);$('grade').textContent=d.grade||'—';$('created').textContent=date(d.publishedAt);$('country').textContent=d.country||'Not public';$('cid').textContent=d.channelId||'—';$('yt').href=d.youtubeUrl||('https://www.youtube.com/channel/'+d.channelId);$('liveSubs').textContent=d.hiddenSubscribers?'Hidden':num(d.subscribers);renderPerformance();renderVideos();renderAchievements();updateAuthUI();
+}
+function renderPerformance(){const c=$('performanceChart');const list=videosData.slice(0,12).reverse();if(!list.length){c.innerHTML='<div class="empty-state">No recent video data.</div>';return}const max=Math.max(...list.map(v=>Number(v.views||0)),1);c.innerHTML=list.map(v=>'<div class="chart-bar" style="height:'+Math.max(8,Number(v.views||0)/max*92)+'%"><span>'+num(v.views)+'</span></div>').join('')}
+function renderVideos(){const search=($('videoSearch')?.value||'').toLowerCase();const filter=$('videoFilter')?.value||'all';const sort=$('videoSort')?.value||'latest';let list=videosData.filter(v=>(v.title||'').toLowerCase().includes(search));list=list.filter(v=>filter==='all'||(filter==='short'?!!v.isShort:!v.isShort));list.sort((a,b)=>sort==='views'?Number(b.views||0)-Number(a.views||0):sort==='likes'?Number(b.likes||0)-Number(a.likes||0):sort==='comments'?Number(b.comments||0)-Number(a.comments||0):new Date(b.publishedAt)-new Date(a.publishedAt));if(!list.length){$('videoGrid').innerHTML='<div class="empty-state">No videos match your filters.</div>';return}$('videoGrid').innerHTML=list.map(v=>{const engagement=Number(v.views)>0?(((Number(v.likes||0)+Number(v.comments||0))/Number(v.views))*100).toFixed(2):'0.00';return '<article class="video-card"><div class="video-thumb"><img src="'+esc(v.thumbnail||'')+'" alt="" loading="lazy"><span class="video-type">'+(v.isShort?'Short':'Video')+(v.durationSeconds?' · '+duration(v.durationSeconds):'')+'</span></div><div class="video-card-body"><div class="video-card-title">'+esc(v.title||'Untitled video')+'</div><div class="video-date">'+date(v.publishedAt)+'</div><div class="video-stats"><div class="video-stat"><span>Views</span><strong>'+num(v.views)+'</strong></div><div class="video-stat"><span>Likes</span><strong>'+num(v.likes)+'</strong></div><div class="video-stat"><span>Comments</span><strong>'+num(v.comments)+'</strong></div><div class="video-stat"><span>Engagement</span><strong>'+engagement+'%</strong></div></div><a class="video-link" href="https://www.youtube.com/watch?v='+encodeURIComponent(v.id)+'" target="_blank" rel="noopener">Watch on YouTube ↗</a></div></article>'}).join('')}
+async function loadHistory(){try{const r=await fetch('/api/public/youtube/history?channelId='+encodeURIComponent(channelData.channelId)+'&days=90&projectionDays=365');const d=await r.json();if(!r.ok)throw new Error('History unavailable');historyData=Array.isArray(d.history)?d.history:[];renderHistory(d)}catch(e){historyData=[];renderHistory({projection:[],projectionAvailable:false,projectionNote:'Historical data is not available yet.'})}}
+function chartFromHistory(items,key,container){const c=$(container);if(!items.length){c.innerHTML='<div class="empty-state">Historical snapshots will appear as CreatorStats collects daily data.</div>';return}const vals=items.map(x=>Number(x[key]||0));const max=Math.max(...vals,1);c.innerHTML=items.map(x=>'<div class="chart-bar" style="height:'+Math.max(8,Number(x[key]||0)/max*92)+'%"><span>'+num(x[key])+'</span></div>').join('')}
+function renderHistory(d){chartFromHistory(historyData,'subscribers','subscriberChart');chartFromHistory(historyData,'views','viewChart');$('dailyBody').innerHTML=historyData.slice().reverse().map(x=>'<tr><td>'+date(x.date)+'</td><td>'+num(x.subscribers)+'</td><td>'+num(x.views)+'</td><td>'+num(x.videos)+'</td></tr>').join('')||'<tr><td colspan="4">No historical snapshots yet.</td></tr>';const p=Array.isArray(d.projection)?d.projection:[];$('projectionNote').textContent=d.projectionNote||'CreatorStats estimates based on stored historical data.';$('projectionGrid').innerHTML=p.length?p.map(x=>'<div class="projection-card"><span>'+x.daysFromNow+' days</span><strong>'+num(x.subscribers)+'</strong><span>projected subscribers</span></div>').join(''):'<div class="empty-state">Projection becomes available after at least two stored daily snapshots.</div>'}
+function renderAchievements(){const d=channelData,s=Number(d.subscribers||0),v=Number(d.views||0),targets=[[1000,'1K subscribers'],[10000,'10K subscribers'],[100000,'100K subscribers'],[1000000,'1M subscribers'],[1000000,'1M views'],[10000000,'10M views'],[100000000,'100M views'],[1000000000,'1B views']];$('achievementGrid').innerHTML=targets.map(x=>'<div class="achievement-card"><strong>'+((x[0]<=s||x[1].includes('views')&&x[0]<=v)?'✓ ':'○ ')+esc(x[1])+'</strong><span>'+(x[1].includes('views')?(x[0]<=v?'Reached':'Not reached'):(x[0]<=s?'Reached':'Not reached'))+'</span></div>').join('')}
+function updateAuthUI(){const guest=$('guestSignIn'),profile=$('profileButton');if(signedIn()){guest.style.display='none';profile.style.display='flex'}else{guest.style.display='block';profile.style.display='none'}}
+function refreshChannel(){location.reload()}
+updateAuthUI();load();
+</script>
+</body>
+</html>
