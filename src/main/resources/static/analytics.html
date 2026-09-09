@@ -8,132 +8,65 @@
 </head>
 <body>
 <div class="analytics-shell">
-  <aside class="quick-rail">
-    <a class="rail-logo" href="/"><img src="/images/creatorstats-logo.png" alt="CreatorStats"></a>
-    <button class="rail-btn active" title="Home" onclick="location.href='/'">⌂</button>
-    <button class="rail-btn" title="Favorites" onclick="openFavorites()">★</button>
-    <div class="rail-spacer"></div>
-    <button id="railProfile" class="rail-btn" title="Profile" onclick="toggleProfileMenu()">●</button>
-  </aside>
-
-  <header class="analytics-topbar">
-    <a class="analytics-brand" href="/">
-      <img src="/images/creatorstats-logo.png" alt="CreatorStats">
-      <div><strong>CreatorStats</strong><span>Manage. Analyze. Grow.</span></div>
-    </a>
-    <div class="top-actions">
-      <a class="top-btn" href="/">New Analysis</a>
-      <a id="guestSignIn" class="top-btn signin-btn" href="/login.html">Sign In</a>
-      <button id="profileButton" class="top-btn profile-btn" onclick="toggleProfileMenu()"><span class="profile-dot">U</span><span>Profile</span></button>
-      <div id="profileMenu" class="profile-menu">
-        <a href="/">⌂ Home</a>
-        <button onclick="openFavorites()">★ Favorites</button>
-        <button onclick="openProfileArea('history')">◷ History</button>
-        <button onclick="openProfileArea('settings')">⚙ Settings</button>
-      </div>
-    </div>
+  <header class="topbar">
+    <a class="brand" href="/"><img src="/images/creatorstats-logo.png" alt="CreatorStats"><span>Creator<strong>Stats</strong></span></a>
+    <div class="top-search"><span>⌕</span><input id="globalSearch" placeholder="Search any YouTube channel (e.g. MrBeast, T-Series, etc.)"><button onclick="globalAnalyze()">⌕</button></div>
+    <div class="top-right"><button class="icon-btn" title="Theme">☼</button><button class="icon-btn" title="Notifications">♧</button><a id="guestSignIn" class="signin" href="/login.html">Sign In</a><button id="profileButton" class="profile-btn" onclick="toggleProfileMenu()"><span>U</span> Sign In⌄</button><div id="profileMenu" class="profile-menu"><a href="/">⌂ Home</a><button onclick="openFavorites()">♡ Favorites</button><button onclick="openProfileArea('history')">◷ History</button><button onclick="openProfileArea('settings')">⚙ Settings</button></div></div>
   </header>
 
+  <aside class="sidebar">
+    <nav class="side-nav">
+      <a href="/" class="side-link">⌂ <span>Home</span></a>
+      <a href="#channelOverview" class="side-link active">⌕ <span>Analyze</span></a>
+      <a href="#compareBox" class="side-link">⇄ <span>Compare Channel</span></a>
+    </nav>
+    <div class="side-divider"></div>
+    <div class="favorite-heading"><strong>Favorites</strong><span id="favoriteCount">0 / 5</span></div>
+    <div id="sidebarFavorites" class="sidebar-favorites"></div>
+    <div id="guestFavoriteCard" class="guest-favorite-card"><div class="guest-star">★</div><strong>Save your favorite channels</strong><p>Sign in to add and manage your favorite YouTube channels.</p><a href="/login.html">Sign In</a><button onclick="location.href='/login.html'">Create Account</button></div>
+  </aside>
+
   <main class="dashboard-main">
-    <div id="loading" class="panel loading-state">Loading channel analytics...</div>
-
+    <div id="loading" class="loading-state">Loading channel analytics...</div>
     <section id="dashboard" class="hidden-section">
-      <div class="channel-hero section-anchor" id="channelOverview">
+      <section class="channel-card section-anchor" id="channelOverview">
         <div class="channel-banner" id="bannerBox"><img id="banner" alt="Channel banner"></div>
-        <div class="channel-body">
+        <div class="channel-info">
           <img id="avatar" class="channel-avatar" alt="Channel avatar">
-          <div class="channel-main">
-            <div>
-              <div class="channel-title-row"><h1 id="name">Channel</h1><span id="verified"></span></div>
-              <div id="handle" class="handle">@channel</div>
-              <p id="meta" class="channel-meta">YouTube channel</p>
-            </div>
-            <div class="channel-actions">
-              <a id="yt" class="action-btn primary" href="#" target="_blank" rel="noopener">View on YouTube ↗</a>
-              <button class="action-btn" onclick="refreshChannel()">↻ Refresh Stats</button>
-              <button id="favoriteButton" class="action-btn favorite-btn" onclick="toggleFavorite()">☆ Add Favorite</button>
-            </div>
-          </div>
-          <nav class="channel-tabs">
-            <button class="channel-tab active" onclick="scrollToSection('channelOverview')">Channel Statistics</button>
-            <button class="channel-tab" onclick="scrollToSection('videoStatistics')">Video Statistics</button>
-            <button class="channel-tab" onclick="scrollToSection('futureProjections')">Future Projections</button>
-            <button class="channel-tab" onclick="scrollToSection('liveCount')">Live Subscriber Count</button>
-            <button class="channel-tab" onclick="scrollToSection('achievements')">Achievements</button>
-          </nav>
+          <div class="channel-identity"><div class="channel-title-row"><h1 id="name">Channel</h1><span id="verified" class="verified"></span></div><div id="handle" class="handle">@channel</div><div class="channel-meta"><span id="meta">YouTube channel</span><span>•</span><span id="createdInline">—</span><span>•</span><span id="countryInline">—</span></div></div>
+          <div class="channel-actions"><button id="favoriteButton" class="btn primary" onclick="toggleFavorite()">♡ Add to Favorites</button><button class="btn" onclick="refreshChannel()">↻ Refresh Stats</button><a id="yt" class="btn youtube" href="#" target="_blank" rel="noopener">▶ View on YouTube</a></div>
         </div>
-      </div>
-
-      <div class="metrics-grid">
-        <article class="metric-card"><span class="metric-label">Subscribers</span><strong id="subs" class="metric-value">—</strong><span class="metric-note">Public count</span></article>
-        <article class="metric-card"><span class="metric-label">Total Views</span><strong id="views" class="metric-value">—</strong><span class="metric-note">Channel lifetime</span></article>
-        <article class="metric-card"><span class="metric-label">Videos</span><strong id="videos" class="metric-value">—</strong><span class="metric-note">Published videos</span></article>
-        <article class="metric-card"><span class="metric-label">Average Views</span><strong id="avg" class="metric-value">—</strong><span class="metric-note">Views per video</span></article>
-      </div>
-
-      <div class="content-grid">
-        <article class="panel">
-          <div class="panel-head"><div><h2>Channel Performance</h2><p>Recent public video performance</p></div><div id="grade" class="grade">—</div></div>
-          <div id="performanceChart" class="chart-box"></div>
-        </article>
-        <article class="panel">
-          <div class="panel-head"><div><h2>Channel Snapshot</h2><p>Public channel information</p></div></div>
-          <div class="snapshot-grid">
-            <div class="snapshot-item"><span>Created</span><strong id="created">—</strong></div>
-            <div class="snapshot-item"><span>Country</span><strong id="country">—</strong></div>
-            <div class="snapshot-item"><span>Channel ID</span><strong id="cid">—</strong></div>
-            <div class="snapshot-item"><span>Data source</span><strong>YouTube Data API</strong></div>
-          </div>
-        </article>
-      </div>
-
-      <section class="growth-grid">
-        <article class="panel section-anchor" id="subscriberGrowth"><div class="panel-head"><div><h2>Subscriber Growth</h2><p>Stored daily public snapshots</p></div></div><div id="subscriberChart" class="chart-box"></div></article>
-        <article class="panel section-anchor" id="viewGrowth"><div class="panel-head"><div><h2>View Growth</h2><p>Stored daily public snapshots</p></div></div><div id="viewChart" class="chart-box"></div></article>
+        <nav class="channel-tabs"><button class="channel-tab active" onclick="scrollToSection('channelOverview')">Channel Statistics</button><button class="channel-tab" onclick="scrollToSection('videoStatistics')">Video Statistics</button><button class="channel-tab" onclick="scrollToSection('futureProjections')">Growth</button><button class="channel-tab" onclick="scrollToSection('futureProjections')">Future Projections</button><button class="channel-tab" onclick="scrollToSection('liveCount')">Live Subscribers</button><button class="channel-tab" onclick="scrollToSection('achievements')">Achievements</button><button class="channel-tab" onclick="scrollToSection('compareBox')">Compare</button></nav>
       </section>
 
-      <section class="panel section-anchor" id="dailyMetrics" style="margin-top:16px">
-        <div class="panel-head"><div><h2>Daily Channel Metrics</h2><p>Actual stored CreatorStats snapshots</p></div></div>
-        <div style="overflow:auto"><table class="daily-table"><thead><tr><th>Date</th><th>Subscribers</th><th>Views</th><th>Videos</th></tr></thead><tbody id="dailyBody"></tbody></table></div>
+      <section class="metrics-grid">
+        <article class="metric-card grade-card"><div id="grade" class="grade">—</div><span>Channel Grade</span></article>
+        <article class="metric-card"><div class="metric-icon">♙</div><strong id="subs">—</strong><span>Subscribers</span><small id="subsChange">Public count</small></article>
+        <article class="metric-card"><div class="metric-icon">◉</div><strong id="views">—</strong><span>Total Views</span><small id="viewsChange">Channel lifetime</small></article>
+        <article class="metric-card"><div class="metric-icon">▣</div><strong id="videos">—</strong><span>Videos</span><small>Published videos</small></article>
+        <article class="metric-card"><div class="metric-icon">◎</div><strong id="avg">—</strong><span>Average Views</span><small>Views per video</small></article>
+        <article class="metric-card"><div class="metric-icon flag">●</div><strong id="country">—</strong><span>Country</span><small>Public channel data</small></article>
+        <article class="metric-card"><div class="metric-icon">♨</div><strong id="category">—</strong><span>Category</span><small>Channel category</small></article>
       </section>
 
-      <section class="panel video-section section-anchor" id="videoStatistics">
-        <div class="panel-head"><div><h2>Video Statistics</h2><p>Recent videos and Shorts with public YouTube metrics</p></div></div>
-        <div class="video-toolbar"><input id="videoSearch" class="video-search" placeholder="Search videos..." oninput="renderVideos()"><select id="videoFilter" class="video-select" onchange="renderVideos()"><option value="all">All</option><option value="video">Videos</option><option value="short">Shorts</option></select><select id="videoSort" class="video-select" onchange="renderVideos()"><option value="latest">Latest</option><option value="views">Most Viewed</option><option value="likes">Most Liked</option><option value="comments">Most Commented</option></select></div>
-        <div id="videoGrid" class="video-grid"></div>
+      <section class="overview-grid">
+        <article class="panel daily-panel"><div class="panel-head"><div><h2>Daily Channel Metrics</h2><p>Latest stored CreatorStats snapshots</p></div><select><option>Last 7 Days</option></select></div><div class="table-wrap"><table class="daily-table"><thead><tr><th>Date</th><th>Subscribers</th><th>Views</th><th>Videos</th></tr></thead><tbody id="dailyBody"></tbody></table></div></article>
+        <div class="growth-stack"><article class="panel chart-panel"><div class="panel-head"><div><h2>Subscriber Growth</h2><p>Historical public snapshots</p></div><div class="range-pills"><button>7D</button><button>30D</button><button>90D</button><button class="selected">1Y</button><button>All</button></div></div><div id="subscriberChart" class="chart-box"></div></article><article class="panel chart-panel"><div class="panel-head"><div><h2>View Growth</h2><p>Historical public snapshots</p></div><div class="range-pills"><button>7D</button><button>30D</button><button>90D</button><button class="selected">1Y</button><button>All</button></div></div><div id="viewChart" class="chart-box"></div></article></div>
       </section>
 
-      <section class="panel section-anchor" id="futureProjections" style="margin-top:16px">
-        <div class="panel-head"><div><h2>Future Projections</h2><p id="projectionNote">CreatorStats estimates based on stored historical data.</p></div></div>
-        <div id="projectionGrid" class="projection-grid"></div>
-      </section>
+      <section class="panel video-section section-anchor" id="videoStatistics"><div class="panel-head"><div><h2>Video Statistics <span id="videoCountLabel"></span></h2><p>Recent videos and Shorts with public YouTube metrics</p></div><div class="video-toolbar"><input id="videoSearch" class="video-search" placeholder="⌕  Search videos..." oninput="renderVideos()"><select id="videoFilter" class="video-select" onchange="renderVideos()"><option value="all">All</option><option value="video">Videos</option><option value="short">Shorts</option></select><select class="video-select"><option>Videos</option><option>All content</option></select><select class="video-select"><option>Shorts</option><option>Videos</option></select><select id="videoSort" class="video-select" onchange="renderVideos()"><option value="latest">Latest</option><option value="views">Most Viewed</option><option value="likes">Most Liked</option><option value="comments">Most Commented</option></select></div></div><div id="videoGrid" class="video-grid"></div></section>
 
-      <section class="panel section-anchor" id="liveCount" style="margin-top:16px">
-        <div class="panel-head"><div><h2>Live Subscriber Count</h2><p>Latest public count from YouTube</p></div></div>
-        <div id="liveSubs" class="live-number">—</div>
-        <p id="liveUpdated" style="color:var(--cs-muted);font-size:13px">Updated when the page is refreshed.</p>
-      </section>
-
-      <section class="panel section-anchor" id="achievements" style="margin-top:16px">
-        <div class="panel-head"><div><h2>Achievements</h2><p>Milestones based only on public channel totals</p></div></div>
-        <div id="achievementGrid" class="achievement-grid"></div>
-      </section>
-
-      <section class="compare-box" id="compareBox">
-        <h3>Compare Channel</h3>
-        <p style="color:var(--cs-muted);margin:4px 0 12px">Compare another channel from your Favorites area.</p>
-        <button class="action-btn primary" onclick="openFavorites()">Open Favorites</button>
-      </section>
+      <section class="panel section-anchor lower-panel" id="futureProjections"><div class="panel-head"><div><h2>Future Projections</h2><p id="projectionNote">CreatorStats estimates based on stored historical data.</p></div></div><div id="projectionGrid" class="projection-grid"></div></section>
+      <section class="panel section-anchor lower-panel" id="liveCount"><div class="panel-head"><div><h2>Live Subscriber Count</h2><p>Latest public count from YouTube</p></div></div><div id="liveSubs" class="live-number">—</div><p id="liveUpdated">Updated when the page is refreshed.</p></section>
+      <section class="panel section-anchor lower-panel" id="achievements"><div class="panel-head"><div><h2>Achievements</h2><p>Milestones based only on public channel totals</p></div></div><div id="achievementGrid" class="achievement-grid"></div></section>
+      <section class="compare-box section-anchor" id="compareBox"><div><h3>Compare Channel</h3><p>Compare another channel from your Favorites area.</p></div><button class="btn primary" onclick="openFavorites()">Open Favorites</button></section>
     </section>
   </main>
 </div>
 
 <script>
 "use strict";
-let channelData=null;
-let videosData=[];
-let historyData=[];
-let favoriteChannels=[];
+let channelData=null,videosData=[],historyData=[],favoriteChannels=[];
 const q=new URLSearchParams(location.search).get("channel");
 const $=id=>document.getElementById(id);
 const num=n=>{n=Number(n||0);if(n>=1e9)return(n/1e9).toFixed(2).replace(/\.00$/,'')+'B';if(n>=1e6)return(n/1e6).toFixed(2).replace(/\.00$/,'')+'M';if(n>=1e3)return(n/1e3).toFixed(2).replace(/\.00$/,'')+'K';return n.toLocaleString()};
@@ -146,56 +79,28 @@ function authHeaders(){return {Authorization:'Bearer '+token(),'Content-Type':'a
 function requireLogin(){location.href='/login.html?returnTo='+encodeURIComponent(location.pathname+location.search)}
 function openFavorites(){if(!signedIn()){requireLogin();return}location.href='/favorites.html'}
 function openProfileArea(area){if(!signedIn()){requireLogin();return}closeProfileMenu();if(area==='history')location.href='/history.html';else if(area==='settings')location.href='/settings.html'}
-function toggleProfileMenu(){if(!signedIn()){requireLogin();return}const m=$('profileMenu');m.classList.toggle('open')}
+function toggleProfileMenu(){if(!signedIn()){requireLogin();return}$("profileMenu").classList.toggle('open')}
 function closeProfileMenu(){$('profileMenu')?.classList.remove('open')}
+function globalAnalyze(){const v=$('globalSearch').value.trim();if(v)location.href='/analytics.html?channel='+encodeURIComponent(v)}
 async function loadFavorites(){
- if(!signedIn()){favoriteChannels=[];updateFavoriteButton();return}
- try{
-  const r=await fetch('/api/favorites',{headers:{Authorization:'Bearer '+token()}});
-  if(r.status===401||r.status===403){favoriteChannels=[];updateFavoriteButton();return}
-  if(!r.ok)throw new Error('Unable to load favorites.');
-  const data=await r.json();favoriteChannels=Array.isArray(data)?data:[];updateFavoriteButton();
- }catch(e){console.warn('Favorites:',e.message)}
+ if(!signedIn()){favoriteChannels=[];renderSidebarFavorites();updateFavoriteButton();return}
+ try{const r=await fetch('/api/favorites',{headers:{Authorization:'Bearer '+token()}});if(r.status===401||r.status===403){favoriteChannels=[];renderSidebarFavorites();updateFavoriteButton();return}if(!r.ok)throw new Error('Unable to load favorites.');const data=await r.json();favoriteChannels=Array.isArray(data)?data:[];renderSidebarFavorites();updateFavoriteButton()}catch(e){console.warn('Favorites:',e.message)}
 }
-function updateFavoriteButton(){const b=$('favoriteButton');if(!b||!channelData)return;const id=channelData.channelId;const saved=favoriteChannels.some(f=>String(f.channelId)===String(id));b.textContent=saved?'★ Remove Favorite':'☆ Add Favorite';b.classList.toggle('saved',saved);b.title=saved?'Remove this channel from Favorites':'Save this channel to Favorites'}
-async function toggleFavorite(){
- if(!signedIn()){requireLogin();return}
- if(!channelData?.channelId)return;
- const saved=favoriteChannels.some(f=>String(f.channelId)===String(channelData.channelId));
- const b=$('favoriteButton');if(b)b.disabled=true;
- try{
-  if(saved){
-   const r=await fetch('/api/favorites/'+encodeURIComponent(channelData.channelId),{method:'DELETE',headers:{Authorization:'Bearer '+token()}});
-   if(!r.ok)throw new Error('Unable to remove favorite.');
-   favoriteChannels=favoriteChannels.filter(f=>String(f.channelId)!==String(channelData.channelId));
-  }else{
-   const payload={channelId:channelData.channelId,title:channelData.title||'YouTube Channel',handle:channelData.handle||null,thumbnail:channelData.thumbnail||null,youtubeUrl:channelData.youtubeUrl||('https://www.youtube.com/channel/'+channelData.channelId)};
-   const r=await fetch('/api/favorites',{method:'POST',headers:authHeaders(),body:JSON.stringify(payload)});
-   let body={};try{body=await r.json()}catch{}
-   if(!r.ok)throw new Error(body.message||'Unable to add favorite.');
-   favoriteChannels.push(body);
-  }
-  updateFavoriteButton();
- }catch(e){alert(e.message||'Unable to update favorite.')}finally{if(b)b.disabled=false}
-}
+function renderSidebarFavorites(){const box=$('sidebarFavorites'),count=$('favoriteCount'),guest=$('guestFavoriteCard');if(count)count.textContent=favoriteChannels.length+' / 5';if(!box)return;if(!signedIn()){box.innerHTML='';if(guest)guest.style.display='block';return}if(guest)guest.style.display='none';if(!favoriteChannels.length){box.innerHTML='<div class="empty-favorites">No favorites yet.<br><button onclick="toggleFavorite()">Save this channel</button></div>';return}box.innerHTML=favoriteChannels.slice(0,5).map(f=>'<div class="side-favorite"><img src="'+esc(f.thumbnail||'')+'" alt=""><div><strong>'+esc(f.title||'YouTube Channel')+'</strong><span>'+esc(f.handle||'')+'</span></div><button onclick="location.href=\'/analytics.html?channel='+encodeURIComponent(f.channelId||'')+'\'">⋮</button></div>').join('')}
+function updateFavoriteButton(){const b=$('favoriteButton');if(!b||!channelData)return;const saved=favoriteChannels.some(f=>String(f.channelId)===String(channelData.channelId));b.textContent=saved?'★ Remove Favorite':'♡ Add to Favorites';b.classList.toggle('saved',saved)}
+async function toggleFavorite(){if(!signedIn()){requireLogin();return}if(!channelData?.channelId)return;const saved=favoriteChannels.some(f=>String(f.channelId)===String(channelData.channelId));const b=$('favoriteButton');if(b)b.disabled=true;try{if(saved){const r=await fetch('/api/favorites/'+encodeURIComponent(channelData.channelId),{method:'DELETE',headers:{Authorization:'Bearer '+token()}});if(!r.ok)throw new Error('Unable to remove favorite.');favoriteChannels=favoriteChannels.filter(f=>String(f.channelId)!==String(channelData.channelId))}else{const payload={channelId:channelData.channelId,title:channelData.title||'YouTube Channel',handle:channelData.handle||null,thumbnail:channelData.thumbnail||null,youtubeUrl:channelData.youtubeUrl||('https://www.youtube.com/channel/'+channelData.channelId)};const r=await fetch('/api/favorites',{method:'POST',headers:authHeaders(),body:JSON.stringify(payload)});let body={};try{body=await r.json()}catch{}if(!r.ok)throw new Error(body.message||'Unable to add favorite.');favoriteChannels.push(body)}renderSidebarFavorites();updateFavoriteButton()}catch(e){alert(e.message||'Unable to update favorite.')}finally{if(b)b.disabled=false}}
 function scrollToSection(id){const el=$(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
-async function load(){
- if(!q){$('loading').textContent='No channel selected. Return to the home page and analyze a channel.';return}
- try{
-  const r=await fetch('/api/public/youtube/channel?query='+encodeURIComponent(q));const d=await r.json();if(!r.ok)throw new Error(d.message||d.error||'Unable to load channel');channelData=d;videosData=Array.isArray(d.recentVideos)?d.recentVideos:[];renderChannel();await Promise.all([loadHistory(),loadFavorites()]);$('loading').classList.add('hidden-section');$('dashboard').classList.remove('hidden-section');
- }catch(e){$('loading').textContent=e.message||'Unable to load channel analytics.'}
-}
-function renderChannel(){
- const d=channelData; $('name').textContent=d.title||'YouTube Channel';$('handle').textContent=d.handle||'@channel';$('meta').textContent=num(d.subscribers)+' subscribers · '+num(d.videos)+' videos';$('avatar').src=d.thumbnail||'';if(d.banner){$('banner').src=d.banner}else $('bannerBox').innerHTML='<div style="height:100%;display:grid;place-items:center;color:#7690b0;font-weight:700">CreatorStats Channel Analytics</div>';$('subs').textContent=d.hiddenSubscribers?'Hidden':num(d.subscribers);$('views').textContent=num(d.views);$('videos').textContent=num(d.videos);$('avg').textContent=num(d.averageViews);$('grade').textContent=d.grade||'—';$('created').textContent=date(d.publishedAt);$('country').textContent=d.country||'Not public';$('cid').textContent=d.channelId||'—';$('yt').href=d.youtubeUrl||('https://www.youtube.com/channel/'+d.channelId);$('liveSubs').textContent=d.hiddenSubscribers?'Hidden':num(d.subscribers);renderPerformance();renderVideos();renderAchievements();updateAuthUI();updateFavoriteButton();
-}
-function renderPerformance(){const c=$('performanceChart');const list=videosData.slice(0,12).reverse();if(!list.length){c.innerHTML='<div class="empty-state">No recent video data.</div>';return}const max=Math.max(...list.map(v=>Number(v.views||0)),1);c.innerHTML=list.map(v=>'<div class="chart-bar" style="height:'+Math.max(8,Number(v.views||0)/max*92)+'%"><span>'+num(v.views)+'</span></div>').join('')}
-function renderVideos(){const search=($('videoSearch')?.value||'').toLowerCase();const filter=$('videoFilter')?.value||'all';const sort=$('videoSort')?.value||'latest';let list=videosData.filter(v=>(v.title||'').toLowerCase().includes(search));list=list.filter(v=>filter==='all'||(filter==='short'?!!v.isShort:!v.isShort));list.sort((a,b)=>sort==='views'?Number(b.views||0)-Number(a.views||0):sort==='likes'?Number(b.likes||0)-Number(a.likes||0):sort==='comments'?Number(b.comments||0)-Number(a.comments||0):new Date(b.publishedAt)-new Date(a.publishedAt));if(!list.length){$('videoGrid').innerHTML='<div class="empty-state">No videos match your filters.</div>';return}$('videoGrid').innerHTML=list.map(v=>{const engagement=Number(v.views)>0?(((Number(v.likes||0)+Number(v.comments||0))/Number(v.views))*100).toFixed(2):'0.00';return '<article class="video-card"><div class="video-thumb"><img src="'+esc(v.thumbnail||'')+'" alt="" loading="lazy"><span class="video-type">'+(v.isShort?'Short':'Video')+(v.durationSeconds?' · '+duration(v.durationSeconds):'')+'</span></div><div class="video-card-body"><div class="video-card-title">'+esc(v.title||'Untitled video')+'</div><div class="video-date">'+date(v.publishedAt)+'</div><div class="video-stats"><div class="video-stat"><span>Views</span><strong>'+num(v.views)+'</strong></div><div class="video-stat"><span>Likes</span><strong>'+num(v.likes)+'</strong></div><div class="video-stat"><span>Comments</span><strong>'+num(v.comments)+'</strong></div><div class="video-stat"><span>Engagement</span><strong>'+engagement+'%</strong></div></div><a class="video-link" href="https://www.youtube.com/watch?v='+encodeURIComponent(v.id)+'" target="_blank" rel="noopener">Watch on YouTube ↗</a></div></article>'}).join('')}
+async function load(){if(!q){$('loading').textContent='No channel selected. Return to the home page and analyze a channel.';return}try{const r=await fetch('/api/public/youtube/channel?query='+encodeURIComponent(q));const d=await r.json();if(!r.ok)throw new Error(d.message||d.error||'Unable to load channel');channelData=d;videosData=Array.isArray(d.recentVideos)?d.recentVideos:[];renderChannel();await Promise.all([loadHistory(),loadFavorites()]);$('loading').classList.add('hidden-section');$('dashboard').classList.remove('hidden-section')}catch(e){$('loading').textContent=e.message||'Unable to load channel analytics.'}}
+function renderChannel(){const d=channelData;$('name').textContent=d.title||'YouTube Channel';$('handle').textContent=d.handle||'@channel';$('meta').textContent=num(d.subscribers)+' subscribers · '+num(d.views)+' views · '+num(d.videos)+' videos';$('avatar').src=d.thumbnail||'';if(d.banner){$('banner').src=d.banner}else $('bannerBox').innerHTML='<div class="banner-fallback">CreatorStats Channel Analytics</div>';$('subs').textContent=d.hiddenSubscribers?'Hidden':num(d.subscribers);$('views').textContent=num(d.views);$('videos').textContent=num(d.videos);$('avg').textContent=num(d.averageViews);$('grade').textContent=d.grade||'—';$('created').textContent=date(d.publishedAt);$('country').textContent=d.country||'Not public';$('cid').textContent=d.channelId||'—';$('countryInline').textContent=d.country||'Not public';$('createdInline').textContent=date(d.publishedAt);$('yt').href=d.youtubeUrl||('https://www.youtube.com/channel/'+d.channelId);$('liveSubs').textContent=d.hiddenSubscribers?'Hidden':num(d.subscribers);$('category').textContent=d.category||'—';$('videoCountLabel').textContent=d.videos?'('+num(d.videos)+' videos)':'';renderPerformance();renderVideos();renderAchievements();updateAuthUI();updateFavoriteButton()}
+function renderPerformance(){return}
+function renderVideos(){const search=($('videoSearch')?.value||'').toLowerCase();const filter=$('videoFilter')?.value||'all';const sort=$('videoSort')?.value||'latest';let list=videosData.filter(v=>(v.title||'').toLowerCase().includes(search));list=list.filter(v=>filter==='all'||(filter==='short'?!!v.isShort:!v.isShort));list.sort((a,b)=>sort==='views'?Number(b.views||0)-Number(a.views||0):sort==='likes'?Number(b.likes||0)-Number(a.likes||0):sort==='comments'?Number(b.comments||0)-Number(a.comments||0):new Date(b.publishedAt)-new Date(a.publishedAt));if(!list.length){$('videoGrid').innerHTML='<div class="empty-state">No videos match your filters.</div>';return}$('videoGrid').innerHTML=list.map(v=>{const engagement=Number(v.views)>0?(((Number(v.likes||0)+Number(v.comments||0))/Number(v.views))*100).toFixed(2):'0.00';return '<article class="video-card"><div class="video-thumb"><img src="'+esc(v.thumbnail||'')+'" alt="" loading="lazy"><span class="video-duration">'+duration(v.durationSeconds)+'</span></div><div class="video-card-body"><div class="video-card-title">'+esc(v.title||'Untitled video')+'</div><span class="video-type-label">'+(v.isShort?'Short':'Video')+'</span><div class="video-date">◉ '+num(v.views)+' views · '+date(v.publishedAt)+'</div><div class="video-stats"><span>♧ '+num(v.likes)+'</span><span>◌ '+num(v.comments)+'</span><span>↗ '+engagement+'%</span></div><a class="video-link" href="https://www.youtube.com/watch?v='+encodeURIComponent(v.id)+'" target="_blank" rel="noopener">Watch on YouTube ↗</a></div></article>'}).join('')}
 async function loadHistory(){try{const r=await fetch('/api/public/youtube/history?channelId='+encodeURIComponent(channelData.channelId)+'&days=90&projectionDays=365');const d=await r.json();if(!r.ok)throw new Error('History unavailable');historyData=Array.isArray(d.history)?d.history:[];renderHistory(d)}catch(e){historyData=[];renderHistory({projection:[],projectionAvailable:false,projectionNote:'Historical data is not available yet.'})}}
-function chartFromHistory(items,key,container){const c=$(container);if(!items.length){c.innerHTML='<div class="empty-state">Historical snapshots will appear as CreatorStats collects daily data.</div>';return}const vals=items.map(x=>Number(x[key]||0));const max=Math.max(...vals,1);c.innerHTML=items.map(x=>'<div class="chart-bar" style="height:'+Math.max(8,Number(x[key]||0)/max*92)+'%"><span>'+num(x[key])+'</span></div>').join('')}
-function renderHistory(d){chartFromHistory(historyData,'subscribers','subscriberChart');chartFromHistory(historyData,'views','viewChart');$('dailyBody').innerHTML=historyData.slice().reverse().map(x=>'<tr><td>'+date(x.date)+'</td><td>'+num(x.subscribers)+'</td><td>'+num(x.views)+'</td><td>'+num(x.videos)+'</td></tr>').join('')||'<tr><td colspan="4">No historical snapshots yet.</td></tr>';const p=Array.isArray(d.projection)?d.projection:[];$('projectionNote').textContent=d.projectionNote||'CreatorStats estimates based on stored historical data.';$('projectionGrid').innerHTML=p.length?p.map(x=>'<div class="projection-card"><span>'+x.daysFromNow+' days</span><strong>'+num(x.subscribers)+'</strong><span>projected subscribers</span></div>').join(''):'<div class="empty-state">Projection becomes available after at least two stored daily snapshots.</div>'}
+function chartFromHistory(items,key,container){const c=$(container);if(!items.length){c.innerHTML='<div class="empty-state">Historical snapshots will appear as CreatorStats collects daily data.</div>';return}const vals=items.map(x=>Number(x[key]||0)),max=Math.max(...vals,1);c.innerHTML='<div class="chart-grid">'+items.map(x=>'<div class="chart-col"><div class="chart-bar" style="height:'+Math.max(8,Number(x[key]||0)/max*100)+'%"></div><span>'+num(x[key])+'</span></div>').join('')+'</div>'}
+function renderHistory(d){chartFromHistory(historyData,'subscribers','subscriberChart');chartFromHistory(historyData,'views','viewChart');$('dailyBody').innerHTML=historyData.slice().reverse().map(x=>'<tr><td>'+date(x.date)+'</td><td class="positive">+'+num(x.subscribers)+'</td><td class="positive">+'+num(x.views)+'</td><td class="positive">+'+num(x.videos)+'</td></tr>').join('')||'<tr><td colspan="4">No historical snapshots yet.</td></tr>';const p=Array.isArray(d.projection)?d.projection:[];$('projectionNote').textContent=d.projectionNote||'CreatorStats estimates based on stored historical data.';$('projectionGrid').innerHTML=p.length?p.map(x=>'<div class="projection-card"><span>'+x.daysFromNow+' days</span><strong>'+num(x.subscribers)+'</strong><span>projected subscribers</span></div>').join(''):'<div class="empty-state">Projection becomes available after at least two stored daily snapshots.</div>'}
 function renderAchievements(){const d=channelData,s=Number(d.subscribers||0),v=Number(d.views||0),targets=[[1000,'1K subscribers'],[10000,'10K subscribers'],[100000,'100K subscribers'],[1000000,'1M subscribers'],[1000000,'1M views'],[10000000,'10M views'],[100000000,'100M views'],[1000000000,'1B views']];$('achievementGrid').innerHTML=targets.map(x=>'<div class="achievement-card"><strong>'+((x[0]<=s||x[1].includes('views')&&x[0]<=v)?'✓ ':'○ ')+esc(x[1])+'</strong><span>'+(x[1].includes('views')?(x[0]<=v?'Reached':'Not reached'):(x[0]<=s?'Reached':'Not reached'))+'</span></div>').join('')}
-function updateAuthUI(){const guest=$('guestSignIn'),profile=$('profileButton'),rail=$('railProfile');if(signedIn()){guest.style.display='none';profile.style.display='flex';rail.style.display='grid'}else{guest.style.display='block';profile.style.display='none';rail.style.display='grid'}}
-document.addEventListener('click',e=>{if(!e.target.closest('.profile-menu')&&!e.target.closest('#profileButton')&&!e.target.closest('#railProfile'))closeProfileMenu()});
+function updateAuthUI(){const guest=$('guestSignIn'),profile=$('profileButton');if(signedIn()){guest.style.display='none';profile.style.display='flex'}else{guest.style.display='block';profile.style.display='none'}renderSidebarFavorites()}
+document.addEventListener('click',e=>{if(!e.target.closest('.profile-menu')&&!e.target.closest('#profileButton'))closeProfileMenu()});
+$('globalSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter')globalAnalyze()});
 function refreshChannel(){location.reload()}
 updateAuthUI();load();
 </script>
