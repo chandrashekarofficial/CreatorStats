@@ -1,0 +1,367 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us — CreatorStats</title>
+    <link rel="stylesheet" href="/css/app.css">
+
+    <style>
+        .contact-page {
+            min-height: 100vh;
+            background: #f5f8fc;
+            padding: 40px 20px 70px;
+        }
+
+        .contact-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .contact-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .contact-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #102f63;
+            font-weight: 800;
+            font-size: 22px;
+        }
+
+        .contact-brand img {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+        }
+
+        .back-link {
+            color: #1685f7;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-card {
+            background: #fff;
+            border-radius: 18px;
+            padding: 42px;
+            box-shadow: 0 10px 35px rgba(16, 47, 99, .08);
+        }
+
+        .contact-title {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .contact-title h1 {
+            margin: 0 0 10px;
+            color: #102f63;
+            font-size: 38px;
+        }
+
+        .contact-title p {
+            margin: 0;
+            color: #6b7280;
+            line-height: 1.7;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 40px;
+        }
+
+        .contact-info {
+            background: #eef6ff;
+            border-radius: 14px;
+            padding: 28px;
+        }
+
+        .contact-info h2 {
+            color: #102f63;
+            margin-top: 0;
+        }
+
+        .contact-info p {
+            color: #4b5563;
+            line-height: 1.7;
+        }
+
+        .contact-item {
+            margin-top: 24px;
+        }
+
+        .contact-item strong {
+            display: block;
+            color: #102f63;
+            margin-bottom: 5px;
+        }
+
+        .contact-item span {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group label {
+            color: #102f63;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #d8e1ec;
+            border-radius: 9px;
+            padding: 13px 14px;
+            font: inherit;
+            color: #1f2937;
+            background: #fff;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #1685f7;
+            box-shadow: 0 0 0 3px rgba(22,133,247,.12);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            border: 0;
+            border-radius: 9px;
+            padding: 14px 22px;
+            background: #1685f7;
+            color: #fff;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(22,133,247,.22);
+        }
+
+        .form-note {
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        @media (max-width: 700px) {
+            .contact-page {
+                padding: 25px 14px 50px;
+            }
+
+            .contact-card {
+                padding: 25px 20px;
+            }
+
+            .contact-header {
+                align-items: flex-start;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .contact-title h1 {
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="contact-page">
+    <div class="contact-container">
+
+        <div class="contact-header">
+            <a href="/index.html" class="contact-brand">
+                <img src="/images/creatorstats-logo.png" alt="CreatorStats">
+                <span>CreatorStats</span>
+            </a>
+
+            <a href="/index.html" class="back-link">← Back to CreatorStats</a>
+        </div>
+
+        <main class="contact-card">
+
+            <div class="contact-title">
+                <h1>Get in Touch</h1>
+                <p>
+                    Have a question, suggestion, or need help with CreatorStats?
+                    We'd love to hear from you.
+                </p>
+            </div>
+
+            <div class="contact-grid">
+
+                <div class="contact-info">
+                    <h2>Contact CreatorStats</h2>
+
+                    <p>
+                        Whether you're reporting an issue, sharing feedback, or
+                        asking a question, you can use the form to reach our team.
+                    </p>
+
+                    <div class="contact-item">
+                        <strong>General Support</strong>
+                        <span>Questions about using CreatorStats</span>
+                    </div>
+
+                    <div class="contact-item">
+                        <strong>Feedback</strong>
+                        <span>Suggestions and ideas for improving CreatorStats</span>
+                    </div>
+
+                    <div class="contact-item">
+                        <strong>Technical Issues</strong>
+                        <span>Report problems or unexpected behavior</span>
+                    </div>
+
+                    <div class="contact-item">
+                        <strong>Privacy</strong>
+                        <span>Questions about your information and privacy</span>
+                    </div>
+                </div>
+
+                <form class="contact-form" id="contactForm">
+
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="Your name"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="you@example.com"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <select id="subject" name="subject" required>
+                            <option value="">Select a subject</option>
+                            <option value="general">General Question</option>
+                            <option value="feedback">Feedback</option>
+                            <option value="technical">Technical Issue</option>
+                            <option value="privacy">Privacy</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea
+                            id="message"
+                            name="message"
+                            placeholder="How can we help?"
+                            required></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        Send Message
+                    </button>
+
+                    <p class="form-note">
+                        This contact form is currently a frontend interface.
+                        Message delivery will be connected to the CreatorStats backend separately.
+                    </p>
+
+                </form>
+
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script>
+document.getElementById("contactForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const button = form.querySelector(".submit-btn");
+
+    button.disabled = true;
+    button.textContent = "Sending...";
+
+    const data = {
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        subject: document.getElementById("subject").value,
+        message: document.getElementById("message").value.trim()
+    };
+
+    try {
+        const response = await fetch("/api/contact", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.text();
+
+        if (!response.ok) {
+            throw new Error(result || "Unable to send message.");
+        }
+
+        alert("Your message has been sent successfully.");
+        form.reset();
+
+    } catch (error) {
+        console.error(error);
+        alert(error.message || "Unable to send message right now.");
+    } finally {
+        button.disabled = false;
+        button.textContent = "Send Message";
+    }
+});
+</script>
+
+</body>
+</html>
+

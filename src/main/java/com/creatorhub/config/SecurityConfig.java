@@ -31,15 +31,21 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/api/auth/**",
                     "/api/public/youtube/**",
+                    "/api/contact",
                     "/",
                     "/index.html",
                     "/login.html",
         "/analytics.html",
+                    "/privacy.html",
+                    "/terms.html",
+                    "/about.html",
+                    "/contact.html",
                     "/favicon.ico",
                     "/favicon.svg",
                     "/error",
                     "/css/**",
-                    "/js/**"
+                    "/js/**",
+    "/images/**"
                 ).permitAll()
                 .anyRequest().authenticated())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

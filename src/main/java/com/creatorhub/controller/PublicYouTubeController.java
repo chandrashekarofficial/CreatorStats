@@ -1,5 +1,6 @@
 package com.creatorhub.controller;
 
+import com.creatorhub.service.ChannelSnapshotService;
 import com.creatorhub.service.PublicYouTubeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -12,12 +13,21 @@ import java.util.Map;
 public class PublicYouTubeController {
 
     private final PublicYouTubeService service;
+    private final ChannelSnapshotService snapshotService;
 
     @GetMapping("/channel")
     public Map<String, Object> getChannel(
             @RequestParam String query) throws Exception {
 
-        return service.getChannel(query);
+        Map<String, Object> channel = service.getChannel(query);
+
+        String channelId = String.valueOf(
+                channel.getOrDefault("channelId", "")
+        );
+
+        snapshotService.saveSnapshot(channelId, channel);
+
+        return channel;
     }
 
     @GetMapping("/videos")

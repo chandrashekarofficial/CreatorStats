@@ -429,8 +429,4 @@ private long parseYouTubeDuration(String duration) {
     private long estimateYearlyEarnings(long totalViews) {
 
         return estimateMonthlyEarnings(totalViews) * 12;
-    }
-    public Map<String, Object> getChannelWithoutSavingSnapshot(String query) throws Exception {
-        return getChannel(query);
-    }
-}
+    }}
