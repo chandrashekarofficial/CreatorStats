@@ -3,8 +3,11 @@ package com.creatorhub.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URLEncoder;
@@ -31,12 +34,18 @@ public class PublicYouTubeService {
                 .queryParam("key", apiKey)
                 .toUriString();
 
-        byte[] responseBytes = restTemplate.getForObject(url, byte[].class);
+        byte[] responseBytes;
+        try {
+            responseBytes = restTemplate.getForObject(url, byte[].class);
+        } catch (HttpClientErrorException.TooManyRequests e) {
+            throw quotaExceeded("YouTube channel data is temporarily unavailable because the API quota has been exhausted.");
+        }
+
         String response = new String(responseBytes, StandardCharsets.UTF_8);
         JsonNode root = objectMapper.readTree(response);
 
         if (!root.has("items") || root.get("items").isEmpty()) {
-            throw new RuntimeException("YouTube channel not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "YouTube channel not found.");
         }
 
         JsonNode channel = root.get("items").get(0);
@@ -64,7 +73,19 @@ public class PublicYouTubeService {
         result.put("estimatedMonthlyEarnings", estimateMonthlyEarnings(views));
         result.put("estimatedYearlyEarnings", estimateYearlyEarnings(views));
         result.put("youtubeUrl", "https://www.youtube.com/channel/" + channelId);
-        result.put("recentVideos", getVideos(channelId).get("videos"));
+
+        try {
+            result.put("recentVideos", getVideos(channelId).get("videos"));
+        } catch (ResponseStatusException e) {
+            if (e.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
+                result.put("recentVideos", Collections.emptyList());
+                result.put("recentVideosUnavailable", true);
+                result.put("recentVideosNote", "Recent videos are temporarily unavailable because the YouTube API quota has been exhausted.");
+            } else {
+                throw e;
+            }
+        }
+
         return result;
     }
 
@@ -89,14 +110,25 @@ public class PublicYouTubeService {
                 + "&q=" + URLEncoder.encode(query, StandardCharsets.UTF_8)
                 + "&key=" + apiKey;
 
-        String response = restTemplate.getForObject(searchUrl, String.class);
+        String response;
+        try {
+            response = restTemplate.getForObject(searchUrl, String.class);
+        } catch (HttpClientErrorException.TooManyRequests e) {
+            throw quotaExceeded("YouTube channel search is temporarily unavailable because the daily API quota has been exhausted. Please try again later.");
+        }
+
         JsonNode root = objectMapper.readTree(response);
 
         if (!root.has("items") || root.get("items").isEmpty()) {
-            throw new RuntimeException("YouTube channel not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "YouTube channel not found.");
         }
 
-        return root.get("items").get(0).path("snippet").path("channelId").asText();
+        String channelId = root.get("items").get(0).path("snippet").path("channelId").asText();
+        if (channelId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "YouTube channel not found.");
+        }
+
+        return channelId;
     }
 
     public Map<String, Object> getVideos(String channelId) throws Exception {
@@ -111,7 +143,13 @@ public class PublicYouTubeService {
                 .queryParam("key", apiKey)
                 .toUriString();
 
-        byte[] responseBytes = restTemplate.getForObject(searchUrl, byte[].class);
+        byte[] responseBytes;
+        try {
+            responseBytes = restTemplate.getForObject(searchUrl, byte[].class);
+        } catch (HttpClientErrorException.TooManyRequests e) {
+            throw quotaExceeded("Recent videos are temporarily unavailable because the YouTube API quota has been exhausted.");
+        }
+
         String response = new String(responseBytes, StandardCharsets.UTF_8);
         JsonNode root = objectMapper.readTree(response);
 
@@ -165,6 +203,10 @@ public class PublicYouTubeService {
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("videos", videos);
         return result;
+    }
+
+    private ResponseStatusException quotaExceeded(String message) {
+        return new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, message);
     }
 
     private long parseYouTubeDuration(String duration) {
