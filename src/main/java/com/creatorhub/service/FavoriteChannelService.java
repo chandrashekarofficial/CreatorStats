@@ -7,6 +7,7 @@ import com.creatorhub.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -56,6 +57,7 @@ public class FavoriteChannelService {
         return favoriteRepository.save(favorite);
     }
 
+    @Transactional
     public void remove(String principalName, String channelId) {
         favoriteRepository.deleteByUserUserIdAndChannelId(userId(principalName), channelId);
     }
