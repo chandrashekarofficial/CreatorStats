@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorStats — Favorites</title>
+<link rel="stylesheet" href="/css/analytics.css">
+<style>
+.favorites-page{max-width:1180px;margin:0 auto;padding:34px 24px 60px}.favorites-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}.favorites-head h1{margin:0}.favorites-head p{margin:6px 0 0;color:var(--cs-muted)}.favorites-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.favorite-card{background:#fff;border:1px solid var(--cs-border);border-radius:18px;padding:18px;display:flex;align-items:center;gap:15px;box-shadow:0 8px 28px rgba(15,35,65,.06)}.favorite-card img{width:64px;height:64px;border-radius:50%;object-fit:cover;background:#eef5ff}.favorite-info{min-width:0;flex:1}.favorite-info h2{font-size:17px;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.favorite-info p{margin:0;color:var(--cs-muted);font-size:13px}.favorite-actions{display:flex;gap:8px}.favorite-actions a,.favorite-actions button{border:1px solid var(--cs-border);background:#fff;border-radius:10px;padding:9px 11px;text-decoration:none;cursor:pointer;font-weight:700}.favorite-actions a{color:#1685f7}.favorite-actions button{color:#b42318}.empty-favorites{background:#fff;border:1px dashed var(--cs-border);border-radius:18px;padding:42px;text-align:center;color:var(--cs-muted)}@media(max-width:760px){.favorites-page{padding:24px 16px 45px}.favorites-head{align-items:flex-start;flex-direction:column}.favorites-grid{grid-template-columns:1fr}.favorite-card{align-items:flex-start}.favorite-actions{flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="analytics-topbar" style="position:relative">
+<a class="analytics-brand" href="/"><img src="/images/creatorstats-logo.png" alt="CreatorStats"><div><strong>CreatorStats</strong><span>Manage. Analyze. Grow.</span></div></a>
+<div class="top-actions"><a class="top-btn" href="/">New Analysis</a><a class="top-btn" href="/analytics.html">Analytics</a></div>
+</header>
+<main class="favorites-page">
+<div class="favorites-head"><div><h1>Favorite Channels</h1><p>Your saved CreatorStats channels. Maximum 5 favorites.</p></div><a class="top-btn" href="/">Analyze a Channel</a></div>
+<div id="status" class="empty-favorites">Loading your favorites...</div>
+<div id="favoritesGrid" class="favorites-grid"></div>
+</main>
+<script>
+"use strict";
+const token=()=>localStorage.getItem('creatorstats_token')||localStorage.getItem('token');
+if(!token()) location.href='/login.html?returnTo='+encodeURIComponent('/favorites.html');
+const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+async function loadFavorites(){
+ try{
+  const r=await fetch('/api/favorites',{headers:{Authorization:'Bearer '+token()}});
+  if(r.status===401||r.status===403){location.href='/login.html?returnTo='+encodeURIComponent('/favorites.html');return}
+  const data=await r.json();
+  if(!r.ok) throw new Error(data.message||'Unable to load favorites.');
+  render(data);
+ }catch(e){document.getElementById('status').textContent=e.message||'Unable to load favorites.'}
+}
+function render(list){
+ const status=document.getElementById('status'),grid=document.getElementById('favoritesGrid');
+ if(!list.length){status.textContent='No favorite channels yet. Analyze a channel and add it to Favorites.';grid.innerHTML='';return}
+ status.remove();
+ grid.innerHTML=list.map(f=>'<article class="favorite-card"><img src="'+esc(f.thumbnail||'')+'" alt=""><div class="favorite-info"><h2>'+esc(f.title||'Channel')+'</h2><p>'+esc(f.handle||'@channel')+'</p></div><div class="favorite-actions"><a href="/analytics.html?channel='+encodeURIComponent(f.channelId)+'">Analyze</a><button onclick="removeFavorite(\''+String(f.channelId).replaceAll("'","\\'")+'\')">Remove</button></div></article>').join('');
+}
+async function removeFavorite(channelId){
+ try{const r=await fetch('/api/favorites/'+encodeURIComponent(channelId),{method:'DELETE',headers:{Authorization:'Bearer '+token()}});if(!r.ok)throw new Error('Unable to remove favorite.');await loadFavorites()}catch(e){alert(e.message)}
+}
+loadFavorites();
+</script>
+</body>
+</html>
