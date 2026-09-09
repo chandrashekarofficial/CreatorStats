@@ -35,7 +35,8 @@ public class SecurityConfig {
                     "/",
                     "/index.html",
                     "/login.html",
-        "/analytics.html",
+                    "/analytics.html",
+                    "/favorites.html",
                     "/privacy.html",
                     "/terms.html",
                     "/about.html",
@@ -45,7 +46,7 @@ public class SecurityConfig {
                     "/error",
                     "/css/**",
                     "/js/**",
-    "/images/**"
+                    "/images/**"
                 ).permitAll()
                 .anyRequest().authenticated())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -67,4 +68,3 @@ public class SecurityConfig {
         return source;
     }
 }
-
