@@ -3,14 +3,10 @@
 (function(){
   const qs=new URLSearchParams(location.search);
   const query=qs.get("channel")||"crzieo";
-  let channel=null;
-  let history=[];
-  let projection=[];
-  let rangeDays=1095;
-  let windowDays=1095;
+  let channel=null,history=[],projection=[];
+  const rangeDays=1095;
+  let windowDays=53;
   let windowStart=0;
-  let hoverIndex=-1;
-
   const $=id=>document.getElementById(id);
   const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
   const fmt=n=>{n=Number(n||0);if(n>=1e12)return(n/1e12).toFixed(2).replace(/\.00$/,'')+"T";if(n>=1e9)return(n/1e9).toFixed(2).replace(/\.00$/,'')+"B";if(n>=1e6)return(n/1e6).toFixed(2).replace(/\.00$/,'')+"M";if(n>=1e3)return(n/1e3).toFixed(2).replace(/\.00$/,'')+"K";return Math.round(n).toLocaleString()};
@@ -30,7 +26,6 @@
   .projection-year-text{fill:#66717d;font-size:11px;font-family:Arial,sans-serif;text-anchor:middle}
   .projection-line{fill:none;stroke:#c94b3f;stroke-width:2.5;vector-effect:non-scaling-stroke}
   .projection-area{fill:#c94b3f;opacity:.16}
-  .projection-history{fill:none;stroke:#687585;stroke-width:2.5;vector-effect:non-scaling-stroke}
   .projection-marker-line{stroke:#d65b50;stroke-width:1;stroke-dasharray:4 4;opacity:.8}
   .projection-marker-text{fill:#3d4650;font-size:10px;font-weight:700;font-family:Arial,sans-serif;writing-mode:vertical-rl;transform:rotate(180deg)}
   .projection-hover-line{stroke:#333;stroke-width:1;stroke-dasharray:3 3;opacity:.65}
@@ -54,62 +49,43 @@
   document.head.appendChild(style);
 
   function makeSvg(id,series,label){
-    const el=$(id);
-    if(!el)return;
-    const W=Math.max(760,el.clientWidth||900),H=390,L=58,R=18,T=28,B=43;
-    const innerW=W-L-R,innerH=H-T-B;
-    const start=Math.max(0,Math.min(windowStart,Math.max(0,series.length-windowDays)));
-    const end=Math.min(series.length,start+windowDays);
-    const visible=series.slice(start,end);
+    const el=$(id);if(!el)return;
+    const W=Math.max(760,el.clientWidth||900),H=390,L=58,R=18,T=28,B=43,innerW=W-L-R,innerH=H-T-B;
+    const start=Math.max(0,Math.min(windowStart,Math.max(0,series.length-windowDays))),end=Math.min(series.length,start+windowDays),visible=series.slice(start,end);
     if(!visible.length){el.innerHTML='<div class="projection-empty">No projection data available yet.</div>';return}
-    const values=visible.map(x=>Number(x.value)||0);
-    const min=Math.max(0,Math.min(...values));
-    const max=Math.max(...values);
-    const pad=(max-min||Math.max(1,max*.08))*.08;
-    const yMin=Math.max(0,min-pad),yMax=max+pad;
-    const x=i=>L+(i/(Math.max(1,visible.length-1)))*innerW;
-    const y=v=>T+innerH-((v-yMin)/(yMax-yMin))*innerH;
-    const path=visible.map((p,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(p.value).toFixed(1)).join(" ");
-    const area=path+` L ${x(visible.length-1).toFixed(1)} ${T+innerH} L ${x(0).toFixed(1)} ${T+innerH} Z`;
-    const ticks=5;
+    const values=visible.map(x=>Number(x.value)||0),min=Math.max(0,Math.min(...values)),max=Math.max(...values),pad=(max-min||Math.max(1,max*.08))*.08,yMin=Math.max(0,min-pad),yMax=max+pad;
+    const x=i=>L+(i/(Math.max(1,visible.length-1)))*innerW,y=v=>T+innerH-((v-yMin)/(yMax-yMin))*innerH;
+    const path=visible.map((p,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(p.value).toFixed(1)).join(" "),area=path+` L ${x(visible.length-1).toFixed(1)} ${T+innerH} L ${x(0).toFixed(1)} ${T+innerH} Z`;
     let svg=`<svg class="projection-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="${esc(label)}"><g>`;
-    for(let i=0;i<=ticks;i++){const v=yMin+(yMax-yMin)*(1-i/ticks),yy=y(v);svg+=`<line class="projection-grid-line" x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}"/><text class="projection-axis-text" x="${L-9}" y="${yy+4}" text-anchor="end">${esc(fmt(v))}</text>`}
-    const yearKeys=[];visible.forEach((p,i)=>{const yr=new Date(p.date).getFullYear();if(!yearKeys.includes(yr))yearKeys.push(yr)});
-    yearKeys.forEach(yr=>{const idx=visible.findIndex(p=>new Date(p.date).getFullYear()===yr);if(idx>=0){const xx=x(idx);svg+=`<text class="projection-year-text" x="${xx}" y="${H-16}">${yr}</text>`}});
+    for(let i=0;i<=5;i++){const v=yMin+(yMax-yMin)*(1-i/5),yy=y(v);svg+=`<line class="projection-grid-line" x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}"/><text class="projection-axis-text" x="${L-9}" y="${yy+4}" text-anchor="end">${esc(fmt(v))}</text>`}
+    const years=[];visible.forEach((p,i)=>{const yr=new Date(p.date).getFullYear();if(!years.includes(yr))years.push(yr)});years.forEach(yr=>{const idx=visible.findIndex(p=>new Date(p.date).getFullYear()===yr);if(idx>=0)svg+=`<text class="projection-year-text" x="${x(idx)}" y="${H-16}">${yr}</text>`});
     if(label.toLowerCase().includes("subscriber")){
-      const targets=[10000,20000,30000,50000,75000,100000,150000,200000,500000,1000000];
-      targets.forEach(target=>{if(target>yMin&&target<yMax){const idx=visible.findIndex(p=>p.value>=target);if(idx>=0){const xx=x(idx);svg+=`<line class="projection-marker-line" x1="${xx}" y1="${T}" x2="${xx}" y2="${T+innerH}"/><text class="projection-marker-text" x="${xx+4}" y="${T+42}">${fmt(target)}</text>`}}});
+      [10000,20000,30000,50000,75000,100000,150000,200000,500000,1000000].forEach(target=>{if(target>yMin&&target<yMax){const idx=visible.findIndex(p=>p.value>=target);if(idx>=0){const xx=x(idx);svg+=`<line class="projection-marker-line" x1="${xx}" y1="${T}" x2="${xx}" y2="${T+innerH}"/><text class="projection-marker-text" x="${xx+4}" y="${T+42}">${fmt(target)}</text>`}}});
     }
-    svg+=`<path class="projection-area" d="${area}"/><path class="projection-line" d="${path}"/>`;
-    svg+=`<line id="${id}-hover" class="projection-hover-line" x1="-10" y1="${T}" x2="-10" y2="${T+innerH}"/><circle id="${id}-dot" class="projection-hover-dot" cx="-10" cy="-10" r="4"/><rect class="projection-hit" x="${L}" y="${T}" width="${innerW}" height="${innerH}" fill="transparent"/>`;
-    svg+=`</g></svg>`;
+    svg+=`<path class="projection-area" d="${area}"/><path class="projection-line" d="${path}"/><line id="${id}-hover" class="projection-hover-line" x1="-10" y1="${T}" x2="-10" y2="${T+innerH}"/><circle id="${id}-dot" class="projection-hover-dot" cx="-10" cy="-10" r="4"/></g></svg>`;
     el.innerHTML=svg;
-    const svgEl=el.querySelector("svg"),tip=$(id+"Tooltip"),hover=el.querySelector("#"+CSS.escape(id+"-hover")),dot=el.querySelector("#"+CSS.escape(id+"-dot"));
-    el.onpointermove=e=>{const rect=svgEl.getBoundingClientRect();const px=(e.clientX-rect.left)/rect.width*W;const idx=Math.max(0,Math.min(visible.length-1,Math.round((px-L)/innerW*(visible.length-1))));const p=visible[idx];if(!p)return;const xx=x(idx),yy=y(p.value);hover.setAttribute("x1",xx);hover.setAttribute("x2",xx);dot.setAttribute("cx",xx);dot.setAttribute("cy",yy);if(tip){tip.style.display="block";tip.innerHTML=`<strong>${esc(full(p.value))}</strong><span>${esc(date(p.date))}</span>`;const tx=Math.min(el.clientWidth-170,Math.max(8,(xx/W)*el.clientWidth+12));tip.style.left=tx+"px";tip.style.top=Math.max(8,(yy/H)*el.clientHeight-12)+"px"}};
-    el.onpointerleave=()=>{if(hover){hover.setAttribute("x1",-10);hover.setAttribute("x2",-10)}if(dot){dot.setAttribute("cx",-10);dot.setAttribute("cy",-10)}if(tip)tip.style.display="none"};
+    const svgEl=el.querySelector("svg"),tip=$(id+"Tooltip"),hover=$(id+"-hover"),dot=$(id+"-dot");
+    el.onpointermove=e=>{const rect=svgEl.getBoundingClientRect(),px=(e.clientX-rect.left)/rect.width*W,idx=Math.max(0,Math.min(visible.length-1,Math.round((px-L)/innerW*(visible.length-1)))),p=visible[idx];if(!p)return;const xx=x(idx),yy=y(p.value);hover.setAttribute("x1",xx);hover.setAttribute("x2",xx);dot.setAttribute("cx",xx);dot.setAttribute("cy",yy);if(tip){tip.style.display="block";tip.innerHTML=`<strong>${esc(full(p.value))}</strong><span>${esc(date(p.date))}</span>`;tip.style.left=Math.min(el.clientWidth-170,Math.max(8,(xx/W)*el.clientWidth+12))+"px";tip.style.top=Math.max(8,(yy/H)*el.clientHeight-12)+"px`}};
+    el.onpointerleave=()=>{hover.setAttribute("x1",-10);hover.setAttribute("x2",-10);dot.setAttribute("cx",-10);dot.setAttribute("cy",-10);if(tip)tip.style.display="none"};
   }
 
   function renderNav(series){
     const box=$("projectionNavigator");if(!box||!series.length)return;
-    const W=Math.max(760,box.clientWidth||900),H=58,L=0,R=0,T=8,B=8,iw=W;
-    const vals=series.map(x=>Number(x.value)||0),min=Math.min(...vals),max=Math.max(...vals),den=max-min||1;
-    const xx=i=>L+(i/(Math.max(1,series.length-1)))*iw,yy=v=>T+(H-T-B)-((v-min)/den)*(H-T-B);
-    const path=series.map((p,i)=>(i?"L":"M")+xx(i).toFixed(1)+" "+yy(p.value).toFixed(1)).join(" ");
+    const W=Math.max(760,box.clientWidth||900),H=58,vals=series.map(x=>Number(x.value)||0),min=Math.min(...vals),max=Math.max(...vals),den=max-min||1,xx=i=>i/(Math.max(1,series.length-1))*W,yy=v=>8+(H-16)-((v-min)/den)*(H-16),path=series.map((p,i)=>(i?"L":"M")+xx(i).toFixed(1)+" "+yy(p.value).toFixed(1)).join(" ");
     box.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><path class="projection-nav-area" d="${path} L ${W} ${H} L 0 ${H} Z"/><path class="projection-nav-line" d="${path}"/></svg><div class="projection-nav-window" id="projectionNavWindow"></div>`;
-    const win=$("projectionNavWindow"),maxStart=Math.max(0,series.length-windowDays),update=()=>{const left=maxStart?windowStart/maxStart*100:0,width=Math.min(100,windowDays/series.length*100);win.style.left=left+"%";win.style.width=width+"%"};
-    update();
-    let dragging=false,lastX=0;
+    const win=$("projectionNavWindow"),maxStart=Math.max(0,series.length-windowDays),update=()=>{win.style.left=(maxStart?windowStart/maxStart*100:0)+"%";win.style.width=Math.min(100,windowDays/series.length*100)+"%"};
+    update();let dragging=false,lastX=0;
     win.onpointerdown=e=>{dragging=true;lastX=e.clientX;win.setPointerCapture?.(e.pointerId)};
     win.onpointermove=e=>{if(!dragging||!maxStart)return;const dx=e.clientX-lastX;lastX=e.clientX;windowStart=Math.max(0,Math.min(maxStart,windowStart+Math.round(dx/box.clientWidth*series.length)));update();drawAll()};
     win.onpointerup=()=>dragging=false;win.onpointercancel=()=>dragging=false;
   }
 
   function drawAll(){
-    const subs=history.map(x=>({date:x.date,value:Number(x.subscribers||0),actual:true})).concat(projection.map(x=>({date:x.date,value:Number(x.expectedSubscribers??x.subscribers??0),actual:false})));
-    const views=history.map(x=>({date:x.date,value:Number(x.views||0),actual:true})).concat(projection.map(x=>({date:x.date,value:Number(x.expectedViews??x.views??0),actual:false})));
+    const subs=history.map(x=>({date:x.date,value:Number(x.subscribers||0)})).concat(projection.map(x=>({date:x.date,value:Number(x.expectedSubscribers??x.subscribers??0)})));
+    const views=history.map(x=>({date:x.date,value:Number(x.views||0)})).concat(projection.map(x=>({date:x.date,value:Number(x.expectedViews??x.views??0)})));
     makeSvg("projectionSubscribers",subs,"Projected Subscribers");makeSvg("projectionViews",views,"Projected Views");renderNav(subs);
     const range=$("projectionRange");if(range){range.max=Math.max(0,subs.length-windowDays);range.value=windowStart}
-    const label=$("projectionRangeLabel");if(label&&subs.length){label.textContent=`${shortDate(subs[Math.min(windowStart,subs.length-1)].date)} — ${shortDate(subs[Math.min(windowStart+windowDays-1,subs.length-1)].date)}`}
+    const label=$("projectionRangeLabel");if(label&&subs.length)label.textContent=`${shortDate(subs[Math.min(windowStart,subs.length-1)].date)} — ${shortDate(subs[Math.min(windowStart+windowDays-1,subs.length-1)].date)}`;
   }
 
   async function load(){
@@ -121,11 +97,10 @@
       if($("projectionViewsTitle"))$("projectionViewsTitle").textContent="Projected Views for "+(channel.title||"Channel");
       if($("projectionNote"))$("projectionNote").textContent=data.projectionNote||"Future projections are estimates based on stored historical data.";
       if(!projection.length){$("projectionCharts").innerHTML='<div class="projection-empty">Future projections will appear after CreatorStats has stored enough historical snapshots.</div>';return}
-      windowDays=Math.min(1095,history.length+projection.length);windowStart=0;drawAll();
+      windowStart=0;drawAll();
       const range=$("projectionRange");if(range)range.oninput=()=>{windowStart=Number(range.value||0);drawAll()};
       window.addEventListener("resize",drawAll);
     }catch(e){if($("projectionCharts"))$("projectionCharts").innerHTML=`<div class="projection-empty">${esc(e.message||"Unable to load projections.")}</div>`}
   }
-
   document.addEventListener("DOMContentLoaded",load);
 })();
