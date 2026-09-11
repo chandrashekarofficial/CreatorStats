@@ -45,6 +45,7 @@ public class SecurityConfig {
                     "/terms.html",
                     "/about.html",
                     "/contact.html",
+    "/help.html",
                     "/favicon.ico",
                     "/favicon.svg",
                     "/error",

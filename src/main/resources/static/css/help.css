@@ -1,0 +1,74 @@
+﻿*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f7f9fc;color:#172033;line-height:1.6}
+a{text-decoration:none;color:inherit}
+.help-topbar{height:76px;background:#fff;border-bottom:1px solid #e7ebf2;display:flex;align-items:center;justify-content:space-between;padding:0 7%;position:sticky;top:0;z-index:20}
+.help-brand{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:700}
+.help-brand img{width:42px;height:42px;object-fit:contain}
+.help-brand strong{color:#1685f7}
+.help-back{font-size:14px;font-weight:600;color:#526074}
+.help-back:hover{color:#1685f7}
+.help-main{max-width:1120px;margin:auto;padding:0 24px 70px}
+.help-hero{margin:42px 0 55px;padding:58px 52px;border-radius:24px;background:linear-gradient(135deg,#eaf4ff,#f7fbff);border:1px solid #dcecff}
+.help-eyebrow{font-size:12px;font-weight:800;letter-spacing:1.5px;color:#1685f7}
+.help-hero h1{font-size:44px;line-height:1.1;margin:10px 0 12px;letter-spacing:-1.5px}
+.help-hero p{margin:0;color:#647084;font-size:17px;max-width:620px}
+.help-search{margin-top:28px;background:#fff;border:1px solid #dbe2ec;border-radius:14px;height:56px;display:flex;align-items:center;padding:0 18px;box-shadow:0 8px 25px rgba(20,50,90,.06)}
+.help-search span{font-size:22px;color:#7a8799;margin-right:12px}
+.help-search input{border:0;outline:0;width:100%;font-size:15px;background:transparent;color:#172033}
+.section-heading{margin-bottom:24px}
+.section-heading h2{font-size:27px;margin:0 0 5px;letter-spacing:-.5px}
+.section-heading p{margin:0;color:#718096}
+.help-section{margin-bottom:60px}
+.help-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.help-card{background:#fff;border:1px solid #e4e9f1;border-radius:17px;padding:24px;transition:.2s;box-shadow:0 5px 20px rgba(30,50,80,.04)}
+.help-card:hover{transform:translateY(-3px);border-color:#bcdcff;box-shadow:0 12px 28px rgba(30,80,130,.08)}
+.help-card span{font-size:12px;font-weight:800;color:#1685f7}
+.help-card h3{font-size:17px;margin:12px 0 7px}
+.help-card p{font-size:13px;color:#68758a;margin:0}
+.faq-section{margin-bottom:55px}
+.faq-group{margin-bottom:38px}
+.faq-group>h3{font-size:19px;margin:0 0 13px}
+details{background:#fff;border:1px solid #e3e8f0;border-radius:12px;margin-bottom:9px;overflow:hidden}
+summary{cursor:pointer;list-style:none;padding:18px 20px;font-size:15px;font-weight:650}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";float:right;font-size:20px;color:#8290a4}
+details[open] summary:after{content:"−"}
+details p{margin:0;padding:0 20px 18px;color:#68758a;font-size:14px}
+.help-contact{background:#172033;color:#fff;border-radius:22px;padding:42px 46px;display:flex;align-items:center;justify-content:space-between;gap:30px}
+.help-contact h2{font-size:30px;margin:8px 0}
+.help-contact p{color:#b8c2d2;margin:0;max-width:560px}
+.help-contact-actions{display:flex;gap:11px;flex-shrink:0}
+.help-primary,.help-secondary{padding:12px 19px;border-radius:10px;font-size:14px;font-weight:700}
+.help-primary{background:#1685f7;color:#fff}
+.help-secondary{background:#fff;color:#172033}
+.help-footer{background:#101722;color:#fff;padding:30px 7%;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.help-footer div:first-child{display:flex;flex-direction:column}
+.help-footer strong{font-size:17px}
+.help-footer span{font-size:12px;color:#8995a8;margin-top:3px}
+.help-footer-links{display:flex;gap:22px;font-size:13px;color:#aeb8c8}
+.help-footer-links a:hover{color:#fff}
+@media(max-width:850px){
+.help-cards{grid-template-columns:repeat(2,1fr)}
+.help-contact{flex-direction:column;align-items:flex-start}
+.help-contact-actions{width:100%}
+}
+@media(max-width:600px){
+.help-topbar{height:68px;padding:0 18px}
+.help-brand{font-size:18px}
+.help-brand img{width:36px;height:36px}
+.help-back{font-size:12px}
+.help-main{padding:0 15px 45px}
+.help-hero{margin:22px 0 40px;padding:34px 23px;border-radius:19px}
+.help-hero h1{font-size:34px}
+.help-hero p{font-size:15px}
+.help-cards{grid-template-columns:1fr}
+.help-contact{padding:30px 24px}
+.help-contact h2{font-size:25px}
+.help-contact-actions{flex-direction:column}
+.help-primary,.help-secondary{text-align:center;width:100%}
+.help-footer{padding:25px 20px;flex-direction:column;align-items:flex-start}
+.help-footer-links{flex-wrap:wrap;gap:15px}
+summary{padding:16px}
+details p{padding:0 16px 16px}
+}

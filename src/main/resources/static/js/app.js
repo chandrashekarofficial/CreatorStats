@@ -1035,55 +1035,183 @@ document.addEventListener(
                 );
             });
 
-
         /* ---------------------------------------------
-           Theme toggle
+           Dynamic Popular Channels
         --------------------------------------------- */
 
-        const themeButton =
-            document.querySelector(
-                ".theme-toggle"
-            );
+        async function loadPopularChannels() {
 
-        if (themeButton) {
+            const container =
+                document.getElementById("popularChannels");
 
-            themeButton.addEventListener(
-                "click",
-                () => {
+            if (!container) {
+                return;
+            }
 
-                    document.body.classList.toggle(
-                        "dark-mode"
-                    );
+            try {
 
-                    localStorage.setItem(
-                        "creatorstats-theme",
-                        document.body.classList.contains(
-                            "dark-mode"
-                        )
-                            ? "dark"
-                            : "light"
+                const response =
+                    await fetch("/api/public/youtube/popular");
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Popular channels request failed: " +
+                        response.status
                     );
                 }
-            );
+
+                const channels =
+                    await response.json();
+
+                if (!Array.isArray(channels) || channels.length === 0) {
+                    throw new Error(
+                        "No popular channels returned."
+                    );
+                }
+
+                const escapeHtml = value =>
+                    String(value ?? "")
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/"/g, "&quot;")
+                        .replace(/'/g, "&#039;");
+
+                const formatNumber = value => {
+
+                    const number = Number(value || 0);
+
+                    if (number >= 1000000000) {
+                        return (
+                            (number / 1000000000)
+                                .toFixed(1)
+                                .replace(/\.0$/, "") +
+                            "B"
+                        );
+                    }
+
+                    if (number >= 1000000) {
+                        return (
+                            (number / 1000000)
+                                .toFixed(1)
+                                .replace(/\.0$/, "") +
+                            "M"
+                        );
+                    }
+
+                    if (number >= 1000) {
+                        return (
+                            (number / 1000)
+                                .toFixed(1)
+                                .replace(/\.0$/, "") +
+                            "K"
+                        );
+                    }
+
+                    return number.toLocaleString();
+                };
+
+                container.innerHTML =
+                    channels
+                        .slice(0, 5)
+                        .map(channel => {
+
+                            const title =
+                                escapeHtml(channel.title);
+
+                            const handle =
+                                escapeHtml(channel.handle);
+
+                            const thumbnail =
+                                escapeHtml(channel.thumbnail);
+
+                            const channelId =
+                                escapeHtml(channel.channelId);
+
+                            return `
+                                <article
+                                    class="channel-card"
+                                    data-query="${handle}"
+                                    data-channel-id="${channelId}"
+                                >
+
+                                    <div class="channel-avatar">
+                                        <img
+                                            src="${thumbnail}"
+                                            alt="${title} channel logo"
+                                            loading="lazy"
+                                        >
+                                    </div>
+
+                                    <div class="channel-info">
+
+                                        <h3>${title}</h3>
+
+                                        <p class="channel-handle">
+                                            ${handle}
+                                        </p>
+
+                                        <div class="channel-stats">
+
+                                            <span>
+                                                ${formatNumber(channel.subscribers)}
+                                                subscribers
+                                            </span>
+
+                                            <span>
+                                                ${formatNumber(channel.views)}
+                                                views
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </article>
+                            `;
+
+                        })
+                        .join("");
+
+                container
+                    .querySelectorAll(".channel-card")
+                    .forEach(card => {
+
+                        card.addEventListener(
+                            "click",
+                            () => {
+
+                                const query =
+                                    card.dataset.query;
+
+                                if (
+                                    query &&
+                                    typeof analyze === "function"
+                                ) {
+                                    analyze(query);
+                                }
+
+                            }
+                        );
+
+                    });
+
+            } catch (error) {
+
+                console.error(
+                    "Popular channels failed:",
+                    error
+                );
+
+                container.innerHTML = `
+                    <div class="popular-loading">
+                        Unable to load popular channels.
+                    </div>
+                `;
+            }
         }
 
-
-        /* ---------------------------------------------
-           Restore theme
-        --------------------------------------------- */
-
-        const savedTheme =
-            localStorage.getItem(
-                "creatorstats-theme"
-            );
-
-        if (savedTheme === "dark") {
-
-            document.body.classList.add(
-                "dark-mode"
-            );
-        }
-
+        loadPopularChannels();
 
         console.log(
             "CreatorStats frontend initialized."

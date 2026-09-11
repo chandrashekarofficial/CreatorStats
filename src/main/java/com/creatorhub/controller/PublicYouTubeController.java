@@ -1,5 +1,6 @@
 package com.creatorhub.controller;
 
+import org.springframework.http.ResponseEntity;
 import com.creatorhub.service.ChannelSnapshotService;
 import com.creatorhub.service.PublicYouTubeService;
 import lombok.RequiredArgsConstructor;
@@ -36,4 +37,8 @@ public class PublicYouTubeController {
 
         return service.getVideos(channelId);
     }
+  @GetMapping("/popular")
+  public ResponseEntity<?> popular() throws Exception {
+    return ResponseEntity.ok(service.getPopularChannels());
+  }
 }

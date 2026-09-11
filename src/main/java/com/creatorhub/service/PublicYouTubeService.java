@@ -23,6 +23,103 @@ public class PublicYouTubeService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private static final List<String> POPULAR_HANDLES = List.of(
+        "@MrBeast",
+        "@TSeries",
+        "@CoComelon",
+        "@SETIndia",
+        "@VladandNiki",
+        "@StokesTwins",
+        "@KidsDianaShow",
+        "@LikeNastyaOfficial",
+        "@ZeeMusicCompany",
+        "@AlejoIgoa"
+    );
+
+    private volatile long popularCacheAt = 0L;
+    private volatile List<Map<String,Object>> popularCache = Collections.emptyList();
+
+    public List<Map<String,Object>> getPopularChannels() throws Exception {
+        long now = System.currentTimeMillis();
+
+        if (!popularCache.isEmpty()
+                && now - popularCacheAt < 6 * 60 * 60 * 1000L) {
+            return popularCache;
+        }
+
+        List<Map<String,Object>> channels = new ArrayList<>();
+
+        for (String handle : POPULAR_HANDLES) {
+            try {
+                String cleanHandle = handle.startsWith("@")
+                        ? handle.substring(1)
+                        : handle;
+
+                String url = UriComponentsBuilder
+                        .fromHttpUrl("https://www.googleapis.com/youtube/v3/channels")
+                        .queryParam("part", "snippet,statistics")
+                        .queryParam("forHandle", cleanHandle)
+                        .queryParam("key", apiKey)
+                        .toUriString();
+
+                byte[] responseBytes = restTemplate.getForObject(
+                        url,
+                        byte[].class
+                );
+
+                JsonNode root = objectMapper.readTree(
+                        new String(responseBytes, StandardCharsets.UTF_8)
+                );
+
+                JsonNode items = root.path("items");
+
+                if (!items.isArray() || items.isEmpty()) {
+                    continue;
+                }
+
+                JsonNode channel = items.get(0);
+                JsonNode snippet = channel.path("snippet");
+                JsonNode statistics = channel.path("statistics");
+
+                Map<String,Object> result = new LinkedHashMap<>();
+
+                result.put("channelId", channel.path("id").asText(""));
+                result.put("title", snippet.path("title").asText(""));
+                result.put("handle", snippet.path("customUrl").asText(handle));
+                result.put("thumbnail", snippet.path("thumbnails")
+                        .path("high").path("url").asText(""));
+                result.put("subscribers",
+                        statistics.path("subscriberCount").asLong(0));
+                result.put("views",
+                        statistics.path("viewCount").asLong(0));
+                result.put("videos",
+                        statistics.path("videoCount").asLong(0));
+                result.put("youtubeUrl",
+                        "https://www.youtube.com/channel/"
+                                + channel.path("id").asText(""));
+
+                channels.add(result);
+
+            } catch (HttpClientErrorException.TooManyRequests e) {
+                break;
+            } catch (Exception ignored) {
+            }
+        }
+
+        channels.sort((a, b) -> Long.compare(
+            ((Number) b.getOrDefault("subscribers", 0L)).longValue(),
+            ((Number) a.getOrDefault("subscribers", 0L)).longValue()
+    ));
+
+        if (!channels.isEmpty()) {
+            popularCache = Collections.unmodifiableList(
+                    new ArrayList<>(channels)
+            );
+            popularCacheAt = now;
+        }
+
+        return popularCache;
+    }
     public Map<String, Object> getChannel(String query) throws Exception {
         String channelId = resolveChannelId(query);
         String url = UriComponentsBuilder.fromHttpUrl("https://www.googleapis.com/youtube/v3/channels")
@@ -66,19 +163,7 @@ public class PublicYouTubeService {
             if (id.contains("/")) id = id.substring(0, id.indexOf("/"));
             return id;
         }
-        if (query.startsWith("@")) query = query.substring(1);
-        String searchUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&maxResults=1&q="
-                + URLEncoder.encode(query, StandardCharsets.UTF_8) + "&key=" + apiKey;
-        String response;
-        try { response = restTemplate.getForObject(searchUrl, String.class); }
-        catch (HttpClientErrorException.TooManyRequests e) {
-            throw quotaExceeded("YouTube channel search is temporarily unavailable because the daily API quota has been exhausted. Please try again later.");
-        }
-        JsonNode root = objectMapper.readTree(response);
-        if (!root.has("items") || root.get("items").isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "YouTube channel not found.");
-        String channelId = root.get("items").get(0).path("snippet").path("channelId").asText();
-        if (channelId.isBlank()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "YouTube channel not found.");
-        return channelId;
+        boolean explicitHandle = query.startsWith("@"); if (explicitHandle) query = query.substring(1); String handleUrl = UriComponentsBuilder.fromHttpUrl("https://www.googleapis.com/youtube/v3/channels").queryParam("part","id").queryParam("forHandle",query).queryParam("key",apiKey).toUriString(); try { JsonNode handleRoot = objectMapper.readTree(restTemplate.getForObject(handleUrl,String.class)); if (handleRoot.has("items") && !handleRoot.get("items").isEmpty()) { String channelId = handleRoot.get("items").get(0).path("id").asText(""); if (!channelId.isBlank()) return channelId; } } catch (HttpClientErrorException.TooManyRequests e) { throw quotaExceeded("YouTube channel lookup is temporarily unavailable. Please try again later."); } if (explicitHandle) throw new ResponseStatusException(HttpStatus.NOT_FOUND,"YouTube channel not found."); String searchUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&maxResults=1&q=" + URLEncoder.encode(query,StandardCharsets.UTF_8) + "&key=" + apiKey; String response; try { response=restTemplate.getForObject(searchUrl,String.class); } catch (HttpClientErrorException.TooManyRequests e) { throw quotaExceeded("YouTube channel search is temporarily unavailable. Try the channel @handle or channel URL instead."); } JsonNode root=objectMapper.readTree(response); if (!root.has("items") || root.get("items").isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND,"YouTube channel not found."); String channelId=root.get("items").get(0).path("snippet").path("channelId").asText(); if (channelId.isBlank()) throw new ResponseStatusException(HttpStatus.NOT_FOUND,"YouTube channel not found."); return channelId;
     }
 
     public Map<String,Object> getVideos(String channelId) throws Exception {
@@ -123,3 +208,4 @@ public class PublicYouTubeService {
     private long estimateMonthlyEarnings(long totalViews) { return Math.round((totalViews / 1000.0) * 1.5); }
     private long estimateYearlyEarnings(long totalViews) { return estimateMonthlyEarnings(totalViews) * 12; }
 }
+

@@ -221,25 +221,7 @@ img {
 }
 
 
-/* Theme */
-
-.theme-toggle {
-    height: 40px;
-    padding: 0 10px;
-
-    border: 1px solid #e0ebf8;
-    border-radius: 22px;
-
-    background: #fff;
-
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    color: var(--navy);
-}
-
-.sun-icon {
+/* Theme */.sun-icon {
     font-size: 23px;
     line-height: 1;
 }
@@ -1864,128 +1846,7 @@ img {
 
 /* =========================================================
    DARK MODE
-========================================================= */
-
-body.dark-mode {
-    --page: #071426;
-    --white: #0d1b31;
-
-    --text: #e8f0fc;
-    --navy: #e8f0fc;
-    --navy-dark: #f3f7ff;
-
-    --muted: #9eb2cf;
-
-    --border: #243b5d;
-}
-
-body.dark-mode .navbar,
-body.dark-mode .popular-section,
-body.dark-mode .about-section {
-    background: #09182c;
-}
-
-body.dark-mode .navbar {
-    border-color: #1c3555;
-}
-
-body.dark-mode .main-nav a,
-body.dark-mode .brand-text small {
-    color: #cbd8eb;
-}
-
-body.dark-mode .hero-section {
-    background:
-        radial-gradient(
-            circle at 75% 35%,
-            rgba(28, 93, 165, 0.28),
-            transparent 35%
-        ),
-        linear-gradient(
-            135deg,
-            #091d36,
-            #0c294b
-        );
-}
-
-body.dark-mode .hero-description,
-body.dark-mode .section-heading p,
-body.dark-mode .channel-basic p,
-body.dark-mode .subscriber-label,
-body.dark-mode .channel-stats span {
-    color: #9fb5d4;
-}
-
-body.dark-mode .analyzer-box,
-body.dark-mode .preview-window,
-body.dark-mode .preview-sidebar,
-body.dark-mode .preview-main,
-body.dark-mode .preview-metric,
-body.dark-mode .preview-chart-card,
-body.dark-mode .countries-card,
-body.dark-mode .channel-card,
-body.dark-mode .about-card,
-body.dark-mode .result-channel-card,
-body.dark-mode .result-metrics article,
-body.dark-mode .result-panel {
-    background: #0e2039;
-    border-color: #243d60;
-}
-
-body.dark-mode .analyzer-box input {
-    color: #fff;
-}
-
-body.dark-mode .analyzer-box input::placeholder {
-    color: #7892b8;
-}
-
-body.dark-mode .preview-nav-item {
-    color: #90a8ca;
-}
-
-body.dark-mode .preview-brand,
-body.dark-mode .preview-channel h3,
-body.dark-mode .preview-metric strong,
-body.dark-mode .chart-title,
-body.dark-mode .country-row b,
-body.dark-mode .channel-basic h3,
-body.dark-mode .subscriber-number,
-body.dark-mode .channel-stats strong {
-    color: #edf4ff;
-}
-
-body.dark-mode .insights-section,
-body.dark-mode .results-section {
-    background: #071426;
-}
-
-body.dark-mode .insights-content > p,
-body.dark-mode .insight-point p,
-body.dark-mode .about-card p {
-    color: #9fb4d2;
-}
-
-body.dark-mode .about-card {
-    background: linear-gradient(
-        135deg,
-        #0d2542,
-        #0d1c31
-    );
-}
-
-body.dark-mode .theme-toggle,
-body.dark-mode .mobile-menu-btn,
-body.dark-mode .view-all-btn,
-body.dark-mode .channel-analyze-btn,
-body.dark-mode .preview-channel-btn {
-    background: #0e2039;
-    border-color: #294462;
-    color: #9fc6f5;
-}
-
-
-/* =========================================================
+========================================================= *//* =========================================================
    RESPONSIVE — LARGE TABLETS
 ========================================================= */
 
@@ -2153,13 +2014,7 @@ body.dark-mode .preview-channel-btn {
 
     .nav-actions {
         gap: 7px;
-    }
-
-    .theme-toggle {
-        display: none;
-    }
-
-    .signin-btn {
+    }.signin-btn {
         min-width: 76px;
         height: 37px;
         padding: 0 11px;
