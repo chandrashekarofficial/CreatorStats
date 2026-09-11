@@ -10,10 +10,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -67,11 +69,11 @@ public class YouTubeConnectionService {
 
         Map<String, Object> channelResponse = restClientBuilder.build()
                 .get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(CHANNEL_ENDPOINT)
+                .uri(UriComponentsBuilder.fromUriString(CHANNEL_ENDPOINT)
                         .queryParam("part", "snippet,statistics")
                         .queryParam("mine", "true")
-                        .build())
+                        .build()
+                        .toUri())
                 .headers(headers -> headers.setBearerAuth(accessToken))
                 .retrieve()
                 .body(Map.class);
@@ -81,7 +83,7 @@ public class YouTubeConnectionService {
         }
 
         Object itemsValue = channelResponse.get("items");
-        if (!(itemsValue instanceof java.util.List<?> items) || items.isEmpty()) {
+        if (!(itemsValue instanceof List<?> items) || items.isEmpty()) {
             throw new IllegalStateException("No YouTube channel was found for the connected Google account.");
         }
 
@@ -96,7 +98,8 @@ public class YouTubeConnectionService {
             throw new IllegalStateException("YouTube channel details are unavailable.");
         }
 
-        String channelName = String.valueOf(snippet.getOrDefault("title", "YouTube Channel"));
+        Object titleValue = snippet.get("title");
+        String channelName = titleValue == null ? "YouTube Channel" : String.valueOf(titleValue);
         String handle = snippet.get("customUrl") == null ? null : String.valueOf(snippet.get("customUrl"));
         if (handle != null && !handle.startsWith("@")) {
             handle = "@" + handle;
@@ -119,6 +122,12 @@ public class YouTubeConnectionService {
         User user = userRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new IllegalStateException("CreatorStats account not found."));
 
+        connectedChannelRepository.findByYoutubeChannelId(channelId)
+                .filter(existing -> !existing.getUser().getUserId().equals(user.getUserId()))
+                .ifPresent(existing -> {
+                    throw new IllegalStateException("That YouTube channel is already connected to another CreatorStats account.");
+                });
+
         ConnectedChannel connected = connectedChannelRepository.findByUserUserId(user.getUserId())
                 .orElseGet(() -> ConnectedChannel.builder().user(user).build());
 
@@ -129,13 +138,26 @@ public class YouTubeConnectionService {
         connectedChannelRepository.save(connected);
     }
 
+    public ConnectedChannel getConnectedChannel(String email) {
+        User user = userRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new IllegalStateException("CreatorStats account not found."));
+        return connectedChannelRepository.findByUserUserId(user.getUserId()).orElse(null);
+    }
+
+    @Transactional
+    public void disconnect(String email) {
+        User user = userRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new IllegalStateException("CreatorStats account not found."));
+        connectedChannelRepository.deleteByUserUserId(user.getUserId());
+    }
+
     private Map<String, Object> exchangeCode(String code) {
-        Map<String, String> form = new LinkedHashMap<>();
-        form.put("code", code);
-        form.put("client_id", clientId);
-        form.put("client_secret", clientSecret);
-        form.put("redirect_uri", redirectUri);
-        form.put("grant_type", "authorization_code");
+        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+        form.add("code", code);
+        form.add("client_id", clientId);
+        form.add("client_secret", clientSecret);
+        form.add("redirect_uri", redirectUri);
+        form.add("grant_type", "authorization_code");
 
         Map<String, Object> response = restClientBuilder.build()
                 .post()
