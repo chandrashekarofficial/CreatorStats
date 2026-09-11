@@ -1221,3 +1221,14 @@ document.addEventListener(
 
 
 
+
+/* Popular Channels - View All navigation */
+document.addEventListener("DOMContentLoaded", function () {
+    const viewAllButton = document.querySelector(".view-all-btn");
+
+    if (viewAllButton) {
+        viewAllButton.addEventListener("click", function () {
+            window.location.href = "/popular.html";
+        });
+    }
+});

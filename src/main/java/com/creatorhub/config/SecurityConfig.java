@@ -34,6 +34,7 @@ public class SecurityConfig {
                     "/api/contact",
                     "/",
                     "/index.html",
+    "/popular.html",
                     "/login.html",
                     "/analytics.html",
                     "/video-analytics.html",
@@ -73,3 +74,4 @@ public class SecurityConfig {
         return source;
     }
 }
+

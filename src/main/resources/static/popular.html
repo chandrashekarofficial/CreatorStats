@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popular Channels - CreatorStats</title>
+
+    <link rel="stylesheet" href="/css/app.css">
+
+    <style>
+        .popular-page {
+            min-height: 100vh;
+            background: #f8fafc;
+            padding-bottom: 60px;
+        }
+
+        .popular-page-header {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 34px 24px 20px;
+        }
+
+        .popular-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 28px;
+        }
+
+        .popular-back:hover {
+            text-decoration: underline;
+        }
+
+        .popular-title {
+            margin: 0;
+            font-size: clamp(30px, 5vw, 48px);
+            line-height: 1.1;
+            color: #0f172a;
+        }
+
+        .popular-subtitle {
+            margin: 12px 0 0;
+            color: #64748b;
+            font-size: 17px;
+        }
+
+        .popular-grid {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .popular-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 22px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            cursor: pointer;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .popular-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        .popular-card img {
+            width: 82px;
+            height: 82px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .popular-card-info {
+            min-width: 0;
+        }
+
+        .popular-card-info h2 {
+            margin: 0 0 5px;
+            font-size: 20px;
+            color: #0f172a;
+        }
+
+        .popular-handle {
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .popular-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            color: #475569;
+            font-size: 14px;
+        }
+
+        .popular-loading,
+        .popular-error {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        @media (max-width: 700px) {
+            .popular-grid {
+                grid-template-columns: 1fr;
+                padding: 0 16px;
+            }
+
+            .popular-page-header {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .popular-card {
+                padding: 18px;
+            }
+
+            .popular-card img {
+                width: 68px;
+                height: 68px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<main class="popular-page">
+
+    <header class="popular-page-header">
+        <a href="/" class="popular-back">
+            <span>←</span>
+            Back to Home
+        </a>
+
+        <h1 class="popular-title">Popular YouTube Channels</h1>
+
+        <p class="popular-subtitle">
+            Explore popular creators and analyze their channel performance with CreatorStats.
+        </p>
+    </header>
+
+    <section class="popular-grid" id="popularPageChannels">
+        <div class="popular-loading">
+            Loading popular channels...
+        </div>
+    </section>
+
+</main>
+
+<script>
+(function () {
+    const container = document.getElementById("popularPageChannels");
+
+    function escapeHtml(value) {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function formatNumber(value) {
+        const number = Number(value || 0);
+
+        if (number >= 1000000000) {
+            return (number / 1000000000).toFixed(1).replace(".0", "") + "B";
+        }
+
+        if (number >= 1000000) {
+            return (number / 1000000).toFixed(1).replace(".0", "") + "M";
+        }
+
+        if (number >= 1000) {
+            return (number / 1000).toFixed(1).replace(".0", "") + "K";
+        }
+
+        return number.toLocaleString();
+    }
+
+    function openChannel(channel) {
+        const query = channel.channelId || channel.handle || channel.title;
+
+        if (!query) {
+            return;
+        }
+
+        window.location.href =
+            "/analytics.html?channel=" + encodeURIComponent(query);
+    }
+
+    fetch("/api/public/youtube/popular")
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error("Failed to load popular channels");
+            }
+
+            return response.json();
+        })
+        .then(function (channels) {
+            if (!Array.isArray(channels) || channels.length === 0) {
+                throw new Error("No popular channels available");
+            }
+
+            container.innerHTML = channels.map(function (channel) {
+                return `
+                    <article class="popular-card" data-channel-id="${escapeHtml(channel.channelId || "")}">
+                        <img
+                            src="${escapeHtml(
+                                channel.thumbnail ||
+                                channel.thumbnailUrl ||
+                                channel.image ||
+                                ""
+                            )}"
+                            alt="${escapeHtml(channel.channelId === "UCk8GzjMOrta8yxDcKfylJYw" ? "Kids Diana Show" : (channel.title || "YouTube channel"))}"
+                            loading="lazy"
+                        >
+
+                        <div class="popular-card-info">
+                            <h2>${escapeHtml(channel.channelId === "UCk8GzjMOrta8yxDcKfylJYw" ? "Kids Diana Show" : (channel.title || "Unknown channel"))}</h2>
+
+                            <div class="popular-handle">
+                                ${escapeHtml(
+                                    channel.handle
+                                        ? "@" + String(channel.handle).replace(/^@/, "")
+                                        : ""
+                                )}
+                            </div>
+
+                            <div class="popular-stats">
+                                <span>
+                                    ${formatNumber(channel.subscribers)}
+                                    subscribers
+                                </span>
+
+                                <span>
+                                    ${formatNumber(channel.views)}
+                                    views
+                                </span>
+
+                                <span>
+                                    ${formatNumber(channel.videoCount || channel.videos)}
+                                    videos
+                                </span>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join("");
+
+            container.querySelectorAll(".popular-card img").forEach(function (image) {
+                image.addEventListener("error", function () {
+                    const fallback = document.createElement("div");
+                    fallback.style.width = "82px";
+                    fallback.style.height = "82px";
+                    fallback.style.borderRadius = "50%";
+                    fallback.style.background = "#e2e8f0";
+                    fallback.style.display = "flex";
+                    fallback.style.alignItems = "center";
+                    fallback.style.justifyContent = "center";
+                    fallback.style.flexShrink = "0";
+                    fallback.style.color = "#0f172a";
+                    fallback.style.fontSize = "24px";
+                    fallback.style.fontWeight = "700";
+
+                    const title = image.alt || "YouTube";
+                    const words = title.trim().split(/\s+/).filter(Boolean);
+
+                    fallback.textContent = words.length > 1
+                        ? (words[0][0] + words[1][0]).toUpperCase()
+                        : title.substring(0, 2).toUpperCase();
+
+                    image.replaceWith(fallback);
+                });
+            });
+
+            container.querySelectorAll(".popular-card").forEach(function (card, index) {
+                card.addEventListener("click", function () {
+                    openChannel(channels[index]);
+                });
+            });
+        })
+        .catch(function (error) {
+            console.error(error);
+
+            container.innerHTML = `
+                <div class="popular-error">
+                    Unable to load popular channels right now.
+                    Please try again.
+                </div>
+            `;
+        });
+})();
+</script>
+
+</body>
+</html>
+
+<style>
+/* CreatorStats Popular Channels polish */
+.popular-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.popular-rank {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    min-width: 34px;
+    height: 28px;
+    padding: 0 9px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.popular-card-info h2 {
+    padding-right: 48px;
+}
+
+.popular-primary-stat {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+@media (max-width: 700px) {
+    .popular-rank {
+        top: 12px;
+        right: 12px;
+    }
+}
+</style>
+
+<script>
+(function () {
+    const cards = document.querySelectorAll(".popular-card");
+
+    cards.forEach(function (card, index) {
+        const rank = document.createElement("span");
+        rank.className = "popular-rank";
+        rank.textContent = "#" + (index + 1);
+        card.appendChild(rank);
+
+        const firstStat = card.querySelector(".popular-stats span");
+
+        if (firstStat) {
+            firstStat.classList.add("popular-primary-stat");
+        }
+    });
+})();
+</script>

@@ -2469,3 +2469,207 @@ img {
 .footer-brand-logo{width:44px;height:44px;object-fit:contain;display:block}
 
 .footer-brand-logo{filter:drop-shadow(0 0 6px rgba(22,133,247,.55));transition:filter .25s ease,transform .25s ease}.footer-logo:hover .footer-brand-logo{filter:drop-shadow(0 0 10px rgba(22,133,247,.8));transform:scale(1.04)}
+
+/* =========================================================
+   CreatorStats landing hero redesign
+   ========================================================= */
+
+.hero-section {
+    padding: 88px 24px 82px !important;
+    text-align: center !important;
+}
+
+.hero-container {
+    display: block !important;
+    max-width: 980px !important;
+    margin: 0 auto !important;
+}
+
+.hero-content {
+    max-width: 900px !important;
+    margin: 0 auto !important;
+    text-align: center !important;
+}
+
+.hero-eyebrow {
+    display: inline-block !important;
+}
+
+.hero-content h1 {
+    max-width: 820px !important;
+    margin: 18px auto 22px !important;
+    font-size: clamp(42px, 6vw, 72px) !important;
+    line-height: 1.05 !important;
+}
+
+.hero-description {
+    max-width: 680px !important;
+    margin: 0 auto 30px !important;
+}
+
+.analyzer-box {
+    max-width: 720px !important;
+    margin: 0 auto !important;
+    text-align: left !important;
+}
+
+#err {
+    max-width: 720px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: left !important;
+}
+
+.benefits-row {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    margin-top: 28px !important;
+}
+
+.hero-dashboard {
+    display: none !important;
+}
+
+/* Prevent old dashboard layout rules from affecting the hero */
+.preview-window,
+.preview-sidebar,
+.preview-main,
+.preview-channel,
+.preview-metrics,
+.preview-charts {
+    display: none !important;
+}
+
+@media (max-width: 700px) {
+    .hero-section {
+        padding: 62px 18px 58px !important;
+    }
+
+    .hero-content h1 {
+        font-size: clamp(36px, 11vw, 52px) !important;
+    }
+
+    .hero-description {
+        font-size: 15px !important;
+    }
+
+    .analyzer-box {
+        width: 100% !important;
+    }
+
+    .benefits-row {
+        gap: 12px 18px !important;
+    }
+}
+
+/* =========================================================
+   FINAL LANDING HERO CLEANUP
+   Remove all legacy dashboard preview elements
+   ========================================================= */
+
+.hero-section {
+    min-height: 0 !important;
+    height: auto !important;
+    padding-top: 72px !important;
+    padding-bottom: 58px !important;
+}
+
+.hero-container {
+    min-height: 0 !important;
+    height: auto !important;
+}
+
+.hero-dashboard,
+.dashboard-preview,
+.dashboard-mockup,
+.preview-window,
+.preview-sidebar,
+.preview-main,
+.preview-channel,
+.preview-metrics,
+.preview-charts,
+.preview-card,
+.preview-navigation {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Catch legacy preview containers whose class contains "preview" */
+[class*="preview-"] {
+    display: none !important;
+}
+
+/* Keep the landing hero compact */
+.hero-content {
+    min-height: 0 !important;
+    height: auto !important;
+}
+
+
+/* FINAL: keep homepage hero content-sized */
+html body main .hero-section#home {
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    padding-top: 70px !important;
+    padding-bottom: 55px !important;
+}
+
+html body main .hero-section#home .hero-container,
+html body main .hero-section#home .hero-inner {
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+}
+
+html body main .hero-section#home .hero-content,
+html body main .hero-section#home .hero-copy {
+    min-height: 0 !important;
+    height: auto !important;
+}
+
+
+/* FINAL HOMEPAGE HERO HEIGHT FIX */
+.hero-section,
+section.hero-section {
+    display: block !important;
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    padding-top: 70px !important;
+    padding-bottom: 55px !important;
+    margin: 0 !important;
+}
+
+.hero-section .hero-container,
+.hero-section .hero-content {
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+}
+
+
+/* FINAL COMPACT HOMEPAGE HERO */
+section.hero-section {
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 45px 24px 40px !important;
+}
+
+section.hero-section .hero-container {
+    min-height: 0 !important;
+    height: auto !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+section.hero-section .hero-content {
+    min-height: 0 !important;
+    height: auto !important;
+}
