@@ -3,12 +3,14 @@ package com.creatorhub.controller;
 import com.creatorhub.entity.ConnectedChannel;
 import com.creatorhub.service.YouTubeConnectionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/youtube")
 @RequiredArgsConstructor
@@ -29,6 +31,8 @@ public class YouTubeConnectionController {
             @RequestParam(required = false) String error
     ) {
         if (error != null || code == null || state == null) {
+            log.warn("YouTube OAuth callback did not complete. error={}, codePresent={}, statePresent={}",
+                    error, code != null, state != null);
             return ResponseEntity.status(302)
                     .header("Location", "/profile.html?youtube=error")
                     .build();
@@ -40,6 +44,7 @@ public class YouTubeConnectionController {
                     .header("Location", "/profile.html?youtube=connected")
                     .build();
         } catch (RuntimeException ex) {
+            log.error("YouTube OAuth callback failed: {}", ex.getMessage(), ex);
             return ResponseEntity.status(302)
                     .header("Location", "/profile.html?youtube=error")
                     .build();
