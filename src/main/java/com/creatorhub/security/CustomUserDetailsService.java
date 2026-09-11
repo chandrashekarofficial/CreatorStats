@@ -19,7 +19,10 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found"));
 
-        return User.withUsername(String.valueOf(user.getUserId()))
+        // The JWT subject is the user's email, and controllers use
+        // Authentication.getName() as that email. Keep the same principal
+        // throughout the security chain.
+        return User.withUsername(user.getEmail())
                 .password(user.getPassword())
                 .roles("USER")
                 .build();
