@@ -32,10 +32,12 @@ public class SecurityConfig {
                     "/api/auth/**",
                     "/api/public/youtube/**",
                     "/api/contact",
+                    "/api/youtube/callback",
                     "/",
                     "/index.html",
-    "/popular.html",
+                    "/popular.html",
                     "/login.html",
+                    "/profile.html",
                     "/analytics.html",
                     "/video-analytics.html",
                     "/projections.html",
@@ -46,7 +48,7 @@ public class SecurityConfig {
                     "/terms.html",
                     "/about.html",
                     "/contact.html",
-    "/help.html",
+                    "/help.html",
                     "/favicon.ico",
                     "/favicon.svg",
                     "/error",
@@ -74,4 +76,3 @@ public class SecurityConfig {
         return source;
     }
 }
-
