@@ -3,23 +3,106 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Settings — CreatorStats</title>
+  <title>Account — CreatorStats</title>
   <style>
-    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#f6f9fc;color:#0f172a}.wrap{max-width:900px;margin:0 auto;padding:32px 20px 70px}.top{display:flex;align-items:center;gap:14px;margin-bottom:28px}.logo{width:44px;height:44px;object-fit:contain}.back{color:#2563eb;text-decoration:none;font-size:14px}.card{background:#fff;border:1px solid #e5eaf0;border-radius:18px;padding:28px;box-shadow:0 10px 30px rgba(15,23,42,.06)}h1{margin:0 0 8px;font-size:30px}p{color:#64748b}.setting{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-bottom:1px solid #eef2f7}.setting:last-child{border-bottom:0}.setting strong{display:block;margin-bottom:4px}.setting span{font-size:13px;color:#64748b}.disabled{padding:8px 12px;border-radius:9px;border:1px solid #e2e8f0;background:#f8fafc;color:#64748b}.btn{display:inline-block;margin-top:24px;padding:11px 16px;border-radius:10px;background:#2563eb;color:#fff;text-decoration:none;font-weight:700}
+    :root{--bg:#f6f9fd;--card:#fff;--text:#12233f;--muted:#6b7f9e;--line:#e2eaf3;--blue:#1677e8;--blue-soft:#eef6ff;--danger:#dc2626;--shadow:0 12px 32px rgba(21,55,92,.07)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+    a{text-decoration:none;color:inherit}
+    .page{max-width:1080px;margin:auto;padding:28px 22px 60px}
+    .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+    .brand{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:800}.brand img{width:32px;height:32px;object-fit:contain}.brand strong{color:var(--blue)}
+    .back{color:var(--blue);font-weight:700;font-size:13px}
+    .layout{display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:start}
+    .nav,.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+    .nav{padding:8px}.nav button,.nav a{width:100%;display:flex;align-items:center;gap:10px;border:0;background:transparent;padding:12px 13px;border-radius:9px;color:var(--text);font:inherit;font-weight:700;text-align:left;cursor:pointer}.nav button:hover,.nav a:hover,.nav .active{background:var(--blue-soft);color:var(--blue)}
+    .content{display:grid;gap:16px}
+    .card{padding:24px}.heading{margin-bottom:18px}.heading h1{margin:0 0 6px;font-size:28px}.heading p{margin:0;color:var(--muted);font-size:13px}
+    .profile-head{display:flex;align-items:center;gap:15px}.avatar{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#17304f;color:#fff;font-weight:800;font-size:20px;object-fit:cover}.profile-head h2{margin:0 0 4px;font-size:20px}.profile-head p{margin:0;color:var(--muted);font-size:13px}
+    .section-title{font-size:16px;margin:0 0 14px}.detail{display:grid;grid-template-columns:1fr 1fr;gap:12px}.detail-box{border:1px solid var(--line);border-radius:11px;padding:14px}.detail-box span{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.detail-box strong{font-size:14px;word-break:break-word}
+    .channel-card{border:1px solid var(--line);border-radius:13px;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:15px}.channel-info{display:flex;align-items:center;gap:12px;min-width:0}.channel-info img{width:52px;height:52px;border-radius:50%;object-fit:cover;background:#edf2f7}.channel-info strong,.channel-info span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.channel-info span{color:var(--muted);font-size:12px;margin-top:3px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;color:var(--text);padding:10px 13px;border-radius:9px;font:inherit;font-weight:750;cursor:pointer}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.danger{color:var(--danger);border-color:#fecaca}.btn:disabled{opacity:.55;cursor:not-allowed}
+    .setting-row{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:15px 0;border-bottom:1px solid var(--line)}.setting-row:last-child{border-bottom:0}.setting-row strong{display:block;margin-bottom:3px;font-size:14px}.setting-row span{color:var(--muted);font-size:12px}.toggle{width:46px;height:26px;border-radius:20px;border:1px solid #cbd7e5;background:#e8eef5;position:relative;cursor:pointer}.toggle:after{content:"";position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:2px;left:2px;box-shadow:0 1px 3px rgba(0,0,0,.15);transition:.2s}.toggle.on{background:var(--blue);border-color:var(--blue)}.toggle.on:after{left:22px}
+    .notice{background:var(--blue-soft);border:1px solid #d6e9ff;border-radius:11px;padding:13px;color:#31567f;font-size:12px}.status{margin-top:10px;font-size:12px;color:var(--muted);min-height:17px}
+    .danger-zone{border-color:#fee2e2}.danger-zone h2{color:var(--danger)}
+    @media(max-width:760px){.layout{grid-template-columns:1fr}.nav{display:flex;overflow:auto}.nav button,.nav a{white-space:nowrap;width:auto}.detail{grid-template-columns:1fr}.channel-card{align-items:flex-start;flex-direction:column}.actions{width:100%}.actions .btn{flex:1}}
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <div class="top"><img class="logo" src="/images/creatorstats-logo.png" alt="CreatorStats"><div><a class="back" href="/">← Back to CreatorStats</a></div></div>
-    <section class="card">
-      <h1>Settings</h1>
-      <p>Manage your CreatorStats account preferences.</p>
-      <div class="setting"><div><strong>Account</strong><span>Your account settings are managed securely through CreatorStats.</span></div><span class="disabled">Coming soon</span></div>
-      <div class="setting"><div><strong>Notifications</strong><span>Control future CreatorStats alerts and updates.</span></div><span class="disabled">Coming soon</span></div>
-      <div class="setting"><div><strong>Appearance</strong><span>Theme preferences will be available here.</span></div><span class="disabled">Coming soon</span></div>
-      <a class="btn" href="/contact.html?subject=Support">Need help?</a>
-    </section>
+  <main class="page">
+    <div class="top">
+      <a class="brand" href="/"><img src="/images/creatorstats-logo.png" alt="CreatorStats"><span>Creator<strong>Stats</strong></span></a>
+      <a class="back" href="/">Back to CreatorStats</a>
+    </div>
+
+    <div class="layout">
+      <aside class="nav" aria-label="Account navigation">
+        <a class="active" href="#account">⚙ Account Settings</a>
+        <a href="#membership">◆ Pro Membership</a>
+        <a href="/help.html">? Help Center</a>
+        <button type="button" id="themeNav">☼ Light mode</button>
+      </aside>
+
+      <section class="content">
+        <div class="card" id="account">
+          <div class="heading"><h1>Account Settings</h1><p>Manage your CreatorStats account and connected YouTube channel.</p></div>
+          <div class="profile-head">
+            <div class="avatar" id="avatar">U</div>
+            <div><h2 id="displayName">CreatorStats User</h2><p id="displayEmail">Signed-in account</p></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">Account Details</h2>
+          <div class="detail">
+            <div class="detail-box"><span>Name</span><strong id="name">—</strong></div>
+            <div class="detail-box"><span>Email Address</span><strong id="email">—</strong></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">Channel</h2>
+          <div id="channelEmpty" class="notice">Connect your YouTube channel to make it available from your CreatorStats account.</div>
+          <div id="channelConnected" class="channel-card" style="display:none">
+            <div class="channel-info"><img id="channelAvatar" alt="Channel avatar"><div><strong id="channelName">YouTube Channel</strong><span id="channelHandle"></span></div></div>
+            <div class="actions"><button class="btn primary" id="analyticsBtn" type="button">Open Analytics</button><button class="btn" id="reconnectBtn" type="button">Reconnect</button><button class="btn danger" id="disconnectBtn" type="button">Disconnect</button></div>
+          </div>
+          <div class="actions" id="connectActions" style="margin-top:12px"><button class="btn primary" id="connectBtn" type="button">Link YouTube Channel</button></div>
+          <div class="status" id="channelStatus" aria-live="polite"></div>
+        </div>
+
+        <div class="card" id="membership">
+          <h2 class="section-title">Membership</h2>
+          <div class="setting-row"><div><strong>CreatorStats Plan</strong><span>Choose your plan and access future creator tools.</span></div><a class="btn primary" href="/pro-tools.html">View Pro Tools</a></div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">Preferences</h2>
+          <div class="setting-row"><div><strong>Appearance</strong><span>Switch between light and dark mode.</span></div><button class="toggle" id="themeToggle" type="button" aria-label="Toggle dark mode"></button></div>
+          <div class="setting-row"><div><strong>Help Center</strong><span>Get help with CreatorStats.</span></div><a class="btn" href="/help.html">Open Help</a></div>
+          <div class="setting-row"><div><strong>Give Feedback</strong><span>Tell us what you would improve.</span></div><a class="btn" href="/contact.html?subject=Feedback">Give Feedback</a></div>
+        </div>
+
+        <div class="card danger-zone">
+          <h2 class="section-title">Delete Account</h2>
+          <p style="color:#6b7f9e;font-size:13px;margin:0 0 14px">Permanently deleting your CreatorStats account is not enabled yet.</p>
+          <button class="btn danger" type="button" disabled>Delete Account</button>
+        </div>
+      </section>
+    </div>
   </main>
-  <script src="/js/footer.js"></script>
+
+  <script>
+    const $=id=>document.getElementById(id);
+    const token=localStorage.getItem('creatorstats_token')||localStorage.getItem('token')||'';
+    function decodeToken(){try{const p=token.split('.')[1];if(!p)return{};return JSON.parse(decodeURIComponent(escape(atob(p.replace(/-/g,'+').replace(/_/g,'/')))))}catch(e){return{}}}
+    function loadAccount(){const p=decodeToken();const email=p.sub||p.email||p.username||'Signed-in account';const name=p.name||p.fullName||email.split('@')[0]||'CreatorStats User';$('name').textContent=name;$('email').textContent=email;$('displayName').textContent=name;$('displayEmail').textContent=email;$('avatar').textContent=(name.charAt(0)||'U').toUpperCase()}
+    function setTheme(dark){document.documentElement.dataset.theme=dark?'dark':'light';$('themeToggle').classList.toggle('on',dark);$('themeNav').textContent=dark?'☾ Dark mode':'☼ Light mode';localStorage.setItem('creatorstats_dark',dark?'1':'0');if(dark){document.documentElement.style.setProperty('--bg','#0f1725');document.documentElement.style.setProperty('--card','#172235');document.documentElement.style.setProperty('--text','#eef5ff');document.documentElement.style.setProperty('--muted','#9eb0c9');document.documentElement.style.setProperty('--line','#2b3a51');document.documentElement.style.setProperty('--blue-soft','#18395f')}else{document.documentElement.style.cssText='';}}
+    function toggleTheme(){setTheme(localStorage.getItem('creatorstats_dark')!=='1')}
+    async function loadChannel(){try{const r=await fetch('/api/youtube/connected',{headers:{Authorization:'Bearer '+token}});if(!r.ok){if(r.status===401||r.status===403)throw new Error('Please sign in again.');throw new Error('Could not load channel.')}const d=await r.json();if(d.connected){$('channelEmpty').style.display='none';$('channelConnected').style.display='flex';$('connectActions').style.display='none';$('channelAvatar').src=d.thumbnail||'';$('channelName').textContent=d.channelName||'YouTube Channel';$('channelHandle').textContent=d.handle||'';$('analyticsBtn').onclick=()=>location.href='/analytics.html?channel='+encodeURIComponent(d.channelId||'');}else{$('channelEmpty').style.display='block';$('channelConnected').style.display='none';$('connectActions').style.display='flex'}}catch(e){$('channelStatus').textContent=e.message}}
+    async function connect(){try{if(!token){location.href='/login.html';return}const r=await fetch('/api/youtube/connect',{headers:{Authorization:'Bearer '+token}});if(!r.ok)throw new Error('Please sign in again.');const d=await r.json();if(d.authorizationUrl)location.href=d.authorizationUrl;else throw new Error('Could not start YouTube connection.')}catch(e){$('channelStatus').textContent=e.message}}
+    async function disconnect(){if(!confirm('Disconnect your YouTube channel from CreatorStats?'))return;try{const r=await fetch('/api/youtube/connected',{method:'DELETE',headers:{Authorization:'Bearer '+token}});if(!r.ok)throw new Error('Could not disconnect channel.');await loadChannel()}catch(e){$('channelStatus').textContent=e.message}}
+    $('connectBtn').onclick=connect;$('reconnectBtn').onclick=connect;$('disconnectBtn').onclick=disconnect;$('themeToggle').onclick=toggleTheme;$('themeNav').onclick=toggleTheme;
+    loadAccount();setTheme(localStorage.getItem('creatorstats_dark')==='1');loadChannel();
+  </script>
 </body>
 </html>
