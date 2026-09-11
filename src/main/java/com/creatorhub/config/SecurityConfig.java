@@ -38,6 +38,7 @@ public class SecurityConfig {
                     "/popular.html",
                     "/login.html",
                     "/profile.html",
+                    "/settings.html",
                     "/analytics.html",
                     "/video-analytics.html",
                     "/projections.html",
