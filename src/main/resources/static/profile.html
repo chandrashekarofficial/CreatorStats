@@ -14,12 +14,14 @@
         .hero h1{margin:0 0 8px;font-size:34px;letter-spacing:-.8px}
         .hero p{margin:0 0 26px;color:#64748b}
         .card{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:30px;box-shadow:0 12px 34px rgba(15,23,42,.06)}
-        .channel{display:flex;align-items:center;gap:20px}
+        .channel{display:flex;align-items:center;gap:20px;cursor:pointer;border-radius:16px;padding:8px;transition:background .15s ease}
+        .channel:hover{background:#f8fbff}
         .avatar{width:92px;height:92px;border-radius:50%;object-fit:cover;background:#eaf2ff;flex:none}
         .channel-info{min-width:0;flex:1}
         .channel-info h2{margin:0 0 6px;font-size:25px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .handle{color:#64748b;margin-bottom:8px}
         .connected{font-size:13px;color:#16a34a;font-weight:700}
+        .channel-hint{margin:12px 8px 0;color:#64748b;font-size:13px}
         .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
         button,a.button{border:0;border-radius:11px;padding:12px 17px;font:inherit;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
         .primary{background:#2563eb;color:#fff;box-shadow:0 8px 18px rgba(37,99,235,.18)}
@@ -118,7 +120,7 @@
 
     function renderChannel(data) {
         const thumbnail = data.thumbnail || "/images/creatorstats-logo.png";
-        card.innerHTML = '<div class="channel">' +
+        card.innerHTML = '<div class="channel" id="channelCard" role="link" tabindex="0" aria-label="Open channel analytics">' +
             '<img class="avatar" src="' + escapeHtml(thumbnail) + '" alt="' + escapeHtml(data.channelName) + '">' +
             '<div class="channel-info">' +
             '<h2>' + escapeHtml(data.channelName) + '</h2>' +
@@ -126,11 +128,23 @@
             '<div class="connected">✓ Connected to CreatorStats</div>' +
             '</div>' +
             '</div>' +
+            '<div class="channel-hint">Click your channel to open its analytics.</div>' +
             '<div class="actions">' +
             '<a class="button primary" href="/analytics.html?channel=' + encodeURIComponent(data.channelId) + '">View Channel Analytics</a>' +
             '<button class="secondary" id="reconnectButton">Reconnect Channel</button>' +
             '<button class="danger" id="disconnectButton">Disconnect</button>' +
             '</div>';
+
+        const openAnalytics = function () {
+            window.location.href = "/analytics.html?channel=" + encodeURIComponent(data.channelId);
+        };
+        document.getElementById("channelCard").addEventListener("click", openAnalytics);
+        document.getElementById("channelCard").addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                openAnalytics();
+            }
+        });
 
         document.getElementById("reconnectButton").addEventListener("click", connectChannel);
         document.getElementById("disconnectButton").addEventListener("click", disconnectChannel);
