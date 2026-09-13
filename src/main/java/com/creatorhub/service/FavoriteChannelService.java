@@ -30,6 +30,7 @@ public class FavoriteChannelService {
     public FavoriteChannel add(String principalName, Map<String, Object> data) {
         Long userId = userId(principalName);
         String channelId = text(data.get("channelId"));
+
         if (channelId == null || channelId.isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Channel ID is required.");
         }
@@ -42,7 +43,7 @@ public class FavoriteChannelService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "You can save up to 5 favorite channels.");
         }
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByEmailIgnoreCase(principalName)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found."));
 
         FavoriteChannel favorite = FavoriteChannel.builder()
@@ -63,11 +64,13 @@ public class FavoriteChannelService {
     }
 
     private Long userId(String principalName) {
-        try {
-            return Long.valueOf(principalName);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid authenticated user.");
-        }
+        User user = userRepository.findByEmailIgnoreCase(principalName)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED,
+                        "User not found."
+                ));
+
+        return user.getUserId();
     }
 
     private String text(Object value) {

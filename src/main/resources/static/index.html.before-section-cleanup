@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>CreatorStats ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â YouTube Analytics</title>
+    <title>CreatorStats — YouTube Analytics</title>
     <meta
         name="description"
         content="CreatorStats helps creators analyze YouTube channels, understand performance, and discover growth insights."
@@ -33,28 +33,34 @@
         </a>
 
         <nav class="main-nav" id="mainNav">
+            <a href="#home" class="active">Home</a>
+            <a href="#popular">Popular Channels</a>
+            <a href="#insights">Insights</a>
+            <a href="/about.html">About</a>
         </nav>
 
         <div class="nav-actions">
 
-            <div class="profile-wrap">
-    <button type="button" class="profile-btn" id="profileButton">
-        <span>U</span> AccountÃ¢Å’â€ž
-    </button>
-
-    <div class="profile-menu" id="profileMenu">
-        <a href="/" class="profile-item">Home</a>
-        <a href="/favorites.html" class="profile-item">Favorites</a>
-        <a href="/pro-tools.html" class="profile-item">Go to Pro Tools</a>
-        <a href="/settings.html" class="profile-item">Account</a>
-        <button type="button" class="profile-item" id="landingThemeButton">Dark mode</button>
-        <div class="profile-separator"></div>
-        <a href="/help.html" class="profile-item">Help</a>
-        <a href="/contact.html?subject=Feedback" class="profile-item">Give Feedback</a>
-        <div class="profile-separator"></div>
-        <button type="button" class="profile-item profile-logout" id="landingLogout">Log Out</button>
-    </div>
-</div>
+            <button type="button" class="signin-btn" id="signInBtn">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                        d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    />
+                    <circle
+                        cx="12"
+                        cy="7"
+                        r="4"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    />
+                </svg>
+                <span>Sign In</span>
+            </button>
 
             <button
                 type="button"
@@ -62,7 +68,7 @@
                 id="mobileMenuBtn"
                 aria-label="Open navigation"
             >
-                &#9776;
+                ☰
             </button>
 
         </div>
@@ -152,22 +158,22 @@
             <div class="benefits-row">
 
                 <div class="benefit">
-                    <span class="check">ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“</span>
+                    <span class="check">✓</span>
                     <span>Real-time Analytics</span>
                 </div>
 
                 <div class="benefit">
-                    <span class="check">ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“</span>
+                    <span class="check">✓</span>
                     <span>Detailed Statistics</span>
                 </div>
 
                 <div class="benefit">
-                    <span class="check">ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“</span>
+                    <span class="check">✓</span>
                     <span>Growth Insights</span>
                 </div>
 
                 <div class="benefit">
-                    <span class="check">ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“</span>
+                    <span class="check">✓</span>
                     <span>100% Free</span>
                 </div>
 
@@ -181,27 +187,27 @@
                     <div class="preview-nav">
 
                         <div class="preview-nav-item active">
-                            <span>ÃƒÂ¢Ã…â€™Ã¢â‚¬Å¡</span>
+                            <span>⌂</span>
                             Dashboard
                         </div>
 
                         <div class="preview-nav-item">
-                            <span>ÃƒÂ¢Ã¢â‚¬â€œÃ‚Â£</span>
+                            <span>▣</span>
                             Videos
                         </div>
 
                         <div class="preview-nav-item">
-                            <span>ÃƒÂ¢Ã…â€™Ã‚Â</span>
+                            <span>⌁</span>
                             Analytics
                         </div>
 
                         <div class="preview-nav-item">
-                            <span>ÃƒÂ¢Ã…â€™Ã¢â‚¬Â¢</span>
+                            <span>⌕</span>
                             SEO
                         </div>
 
                         <div class="preview-nav-item">
-                            <span>ÃƒÂ¢Ã¢â‚¬â€œÃ‚Â¤</span>
+                            <span>▤</span>
                             Reports
                         </div>
 
@@ -222,10 +228,10 @@
                             </div>
 
                             <div>
-                                <h3>Crzieo <span>ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“</span></h3>
+                                <h3>Crzieo <span>✓</span></h3>
                                 <p>@crzieo</p>
                                 <small>
-                                    1.23M subscribers&nbsp;&nbsp;ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢&nbsp;&nbsp;482 videos
+                                    1.23M subscribers&nbsp;&nbsp;•&nbsp;&nbsp;482 videos
                                 </small>
                             </div>
 
@@ -244,25 +250,25 @@
                         <div class="preview-metric">
                             <span>Total Views</span>
                             <strong>481.2M</strong>
-                            <small>ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬Ëœ 12.5%</small>
+                            <small>↑ 12.5%</small>
                         </div>
 
                         <div class="preview-metric">
                             <span>Watch Time (Hours)</span>
                             <strong>12.8M</strong>
-                            <small>ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬Ëœ 14.2%</small>
+                            <small>↑ 14.2%</small>
                         </div>
 
                         <div class="preview-metric">
                             <span>Subscribers</span>
                             <strong>1.23M</strong>
-                            <small>ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬Ëœ 8.7%</small>
+                            <small>↑ 8.7%</small>
                         </div>
 
                         <div class="preview-metric">
                             <span>Est. Earnings</span>
                             <strong>$3.2K - $51.6K</strong>
-                            <small>ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬Ëœ 11.3%</small>
+                            <small>↑ 11.3%</small>
                         </div>
 
                     </div>
@@ -326,7 +332,7 @@
                             </div>
 
                             <div class="country-row">
-                                <span>ÃƒÂ°Ã…Â¸Ã¢â‚¬Â¡Ã‚ÂºÃƒÂ°Ã…Â¸Ã¢â‚¬Â¡Ã‚Â¸</span>
+                                <span>🇺🇸</span>
                                 <span>United States</span>
                                 <div class="country-bar">
                                     <i style="width:82%"></i>
@@ -335,7 +341,7 @@
                             </div>
 
                             <div class="country-row">
-                                <span>ÃƒÂ°Ã…Â¸Ã¢â‚¬Â¡Ã‚Â®ÃƒÂ°Ã…Â¸Ã¢â‚¬Â¡Ã‚Â³</span>
+                                <span>🇮🇳</span>
                                 <span>India</span>
                                 <div class="country-bar">
                                     <i style="width:16%"></i>
@@ -344,7 +350,7 @@
                             </div>
 
                             <div class="country-row">
-                                <span>ÃƒÂ°Ã…Â¸Ã¢â‚¬Â¡Ã‚Â¬ÃƒÂ°Ã…Â¸Ã¢â‚¬Â¡Ã‚Â§</span>
+                                <span>🇬🇧</span>
                                 <span>United Kingdom</span>
                                 <div class="country-bar">
                                     <i style="width:14%"></i>
@@ -353,7 +359,7 @@
                             </div>
 
                             <div class="country-row">
-                                <span>ÃƒÂ°Ã…Â¸Ã¢â‚¬Â¡Ã‚ÂµÃƒÂ°Ã…Â¸Ã¢â‚¬Â¡Ã‚Â­</span>
+                                <span>🇵🇭</span>
                                 <span>Philippines</span>
                                 <div class="country-bar">
                                     <i style="width:11%"></i>
@@ -362,7 +368,7 @@
                             </div>
 
                             <div class="country-row">
-                                <span>ÃƒÂ°Ã…Â¸Ã¢â‚¬Â¡Ã‚Â¨ÃƒÂ°Ã…Â¸Ã¢â‚¬Â¡Ã‚Â¦</span>
+                                <span>🇨🇦</span>
                                 <span>Canada</span>
                                 <div class="country-bar">
                                     <i style="width:10%"></i>
@@ -395,7 +401,7 @@
 
             <div>
                 <div class="section-title-row">
-                    <span class="fire-icon">ÃƒÂ¢Ã¢â€žÂ¢Ã‚Â¨</span>
+                    <span class="fire-icon">♨</span>
                     <h2>Popular Channels</h2>
                 </div>
 
@@ -406,7 +412,7 @@
 
             <button type="button" class="view-all-btn">
                 View All
-                <span>ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢</span>
+                <span>→</span>
             </button>
 
         </div>
@@ -425,7 +431,60 @@
 <!-- =========================================================
      INSIGHTS
 ========================================================= -->
+<section class="insights-section" id="insights">
 
+    <div class="section-container">
+
+        <div class="insights-content">
+
+            <span class="section-eyebrow">
+                CREATOR INSIGHTS
+            </span>
+
+            <h2>
+                Understand your channel.
+                <span>Grow with confidence.</span>
+            </h2>
+
+            <p>
+                CreatorStats turns public YouTube data into clear,
+                useful information so creators can understand
+                channel performance and identify growth opportunities.
+            </p>
+
+            <div class="insight-points">
+
+                <div class="insight-point">
+                    <span>✓</span>
+                    <div>
+                        <strong>Track Performance</strong>
+                        <p>Monitor important channel statistics in one place.</p>
+                    </div>
+                </div>
+
+                <div class="insight-point">
+                    <span>✓</span>
+                    <div>
+                        <strong>Discover Trends</strong>
+                        <p>Understand how your channel is performing over time.</p>
+                    </div>
+                </div>
+
+                <div class="insight-point">
+                    <span>✓</span>
+                    <div>
+                        <strong>Make Better Decisions</strong>
+                        <p>Use data to plan your next steps with confidence.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
 
 
 <!-- =========================================================
@@ -452,7 +511,7 @@
                 rel="noopener noreferrer"
                 class="youtube-link"
             >
-                View on YouTube ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â€
+                View on YouTube ↗
             </a>
 
         </div>
@@ -486,25 +545,25 @@
 
             <article>
                 <span>Subscribers</span>
-                <strong id="subs">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</strong>
+                <strong id="subs">—</strong>
                 <small>Public count</small>
             </article>
 
             <article>
                 <span>Total Views</span>
-                <strong id="views">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</strong>
+                <strong id="views">—</strong>
                 <small>Channel lifetime</small>
             </article>
 
             <article>
                 <span>Videos</span>
-                <strong id="videos">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</strong>
+                <strong id="videos">—</strong>
                 <small>Published videos</small>
             </article>
 
             <article>
                 <span>Avg. Views / Video</span>
-                <strong id="avg">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</strong>
+                <strong id="avg">—</strong>
                 <small>Simple average</small>
             </article>
 
@@ -540,17 +599,17 @@
 
                     <div>
                         <span>Created</span>
-                        <strong id="created">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</strong>
+                        <strong id="created">—</strong>
                     </div>
 
                     <div>
                         <span>Country</span>
-                        <strong id="country">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</strong>
+                        <strong id="country">—</strong>
                     </div>
 
                     <div>
                         <span>Channel ID</span>
-                        <strong id="cid">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</strong>
+                        <strong id="cid">—</strong>
                     </div>
 
                     <div>
@@ -572,7 +631,50 @@
 <!-- =========================================================
      ABOUT
 ========================================================= -->
+<section class="about-section" id="about">
 
+    <div class="section-container">
+
+        <div class="about-card">
+
+            <div class="about-logo">
+                <svg viewBox="0 0 64 64">
+                    <circle
+                        cx="32"
+                        cy="32"
+                        r="26"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="7"
+                    />
+                    <path
+                        d="M27 20 L45 32 L27 44 Z"
+                        fill="currentColor"
+                    />
+                </svg>
+            </div>
+
+            <div>
+                <span class="section-eyebrow">
+                    ABOUT CREATORSTATS
+                </span>
+
+                <h2>
+                    Better insights. Bigger growth.
+                </h2>
+
+                <p>
+                    CreatorStats is built to make YouTube analytics
+                    easier to understand. Analyze channels, explore
+                    performance and turn data into useful growth insights.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
 
 </main>
 
@@ -586,7 +688,15 @@
 
         <div class="footer-brand">
 
-            
+            <a href="#home" class="footer-logo">
+
+                <span class="footer-logo-icon"><img class="creatorstats-logo footer-brand-logo" src="/images/creatorstats-logo.png" alt="CreatorStats"></span>
+
+                <span>
+                    Creator<span>Stats</span>
+                </span>
+
+            </a>
 
             <p class="footer-tagline">
                 Manage. Analyze. Grow.
@@ -604,10 +714,10 @@
 
             <h3>Quick Links</h3>
 
-            
-            
-            
-            
+            <a href="#home">Home</a>
+            <a href="#popular">Popular Channels</a>
+            <a href="#insights">Insights</a>
+            <a href="/about.html">About</a>
 
         </div>
 
@@ -649,7 +759,7 @@
             </div>
 
             <p class="copyright">
-                Ãƒâ€šÃ‚Â© 2025 CreatorStats. All rights reserved.
+                © 2025 CreatorStats. All rights reserved.
             </p>
 
         </div>
@@ -662,62 +772,10 @@
 <!-- =========================================================
      JAVASCRIPT
 ========================================================= -->
-<script src="/js/app.js?v=20260912-auth"></script>
-
-
-<!-- CREATORSTATS LANDING AUTH FIX -->
-<script>
-(function () {
-    function updateLandingAuth() {
-        const button = document.getElementById("landingAuthButton");
-        const text = document.getElementById("landingAuthText");
-
-        if (!button || !text) return;
-
-        const keys = [
-            "creatorhub_token",
-            "creatorstats_token",
-            "token",
-            "jwt",
-            "accessToken",
-            "authToken"
-        ];
-
-        let loggedIn = false;
-
-        for (const key of keys) {
-            const value = localStorage.getItem(key);
-            if (value && value.trim()) {
-                loggedIn = true;
-                break;
-            }
-        }
-
-        if (loggedIn) {
-            text.textContent = "Account";
-            button.href = "/settings.html";
-        } else {
-            text.textContent = "Sign In";
-            button.href = "/login.html";
-        }
-    }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", updateLandingAuth);
-    } else {
-        updateLandingAuth();
-    }
-
-    window.addEventListener("storage", updateLandingAuth);
-})();
-</script>
-<!-- END CREATORSTATS LANDING AUTH FIX -->
+<script src="/js/app.js"></script>
 
 </body>
 </html>
-
-
-
 
 
 

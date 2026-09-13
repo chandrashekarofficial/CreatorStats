@@ -2673,3 +2673,163 @@ section.hero-section .hero-content {
     min-height: 0 !important;
     height: auto !important;
 }
+
+.profile-wrap{position:relative}
+.profile-btn{display:flex;align-items:center;gap:6px;border:1px solid var(--line,#ddd);background:#fff;border-radius:8px;padding:5px 9px;font-weight:700;cursor:pointer}
+.profile-btn span{width:25px;height:25px;border-radius:50%;background:#111827;color:#fff;display:grid;place-items:center}
+.profile-menu{display:none;position:absolute;right:0;top:42px;width:190px;background:#fff;border:1px solid #ddd;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.12);z-index:120;overflow:hidden}
+.profile-menu.open{display:block}
+.profile-item{display:block;width:100%;padding:9px 10px;border:0;background:transparent;text-align:left;text-decoration:none;color:inherit;font:inherit;cursor:pointer}
+.profile-item:hover{background:#f3f4f6}
+.profile-separator{height:1px;background:#e5e7eb;margin:4px 0}
+.profile-logout{color:#dc2626}
+
+/* CreatorStats landing profile menu */
+.profile-wrap {
+    position: relative;
+}
+
+.nav-actions .profile-btn {
+    display: flex !important;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid #dbe4f0;
+    background: #fff;
+    color: #102d63;
+    border-radius: 9px;
+    padding: 5px 10px 5px 6px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.nav-actions .profile-btn span {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #102d63;
+    color: #fff;
+    font-size: 13px;
+}
+
+.profile-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 42px;
+    width: 195px;
+    background: #fff;
+    border: 1px solid #dbe4f0;
+    border-radius: 10px;
+    box-shadow: 0 12px 30px rgba(16,45,99,.14);
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.profile-menu.open {
+    display: block;
+}
+
+.profile-item {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 13px;
+    border: 0;
+    background: transparent;
+    color: #102d63;
+    text-align: left;
+    text-decoration: none;
+    font: inherit;
+    cursor: pointer;
+}
+
+.profile-item:hover {
+    background: #f3f7fc;
+}
+
+.profile-separator {
+    height: 1px;
+    background: #e7edf5;
+    margin: 4px 0;
+}
+
+.profile-logout {
+    color: #c62828;
+}
+
+/* CreatorStats landing profile menu */
+.profile-wrap {
+    position: relative;
+}
+
+.nav-actions .profile-btn {
+    display: flex !important;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid #dbe4f0;
+    background: #fff;
+    color: #102d63;
+    border-radius: 9px;
+    padding: 5px 10px 5px 6px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.nav-actions .profile-btn span {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #102d63;
+    color: #fff;
+    font-size: 13px;
+}
+
+.profile-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 42px;
+    width: 195px;
+    background: #fff;
+    border: 1px solid #dbe4f0;
+    border-radius: 10px;
+    box-shadow: 0 12px 30px rgba(16,45,99,.14);
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.profile-menu.open {
+    display: block;
+}
+
+.profile-item {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 13px;
+    border: 0;
+    background: transparent;
+    color: #102d63;
+    text-align: left;
+    text-decoration: none;
+    font: inherit;
+    cursor: pointer;
+}
+
+.profile-item:hover {
+    background: #f3f7fc;
+}
+
+.profile-separator {
+    height: 1px;
+    background: #e7edf5;
+    margin: 4px 0;
+}
+
+.profile-logout {
+    color: #c62828;
+}

@@ -1,5 +1,5 @@
 /* =========================================================
-   CreatorStats â€” Landing Page JavaScript
+   CreatorStats Ã¢â‚¬â€ Landing Page JavaScript
    ========================================================= */
 
 "use strict";
@@ -39,12 +39,12 @@ function esc(value) {
 }
 
 function date(value) {
-    if (!value) return "â€”";
+    if (!value) return "Ã¢â‚¬â€";
 
     const d = new Date(value);
 
     if (Number.isNaN(d.getTime())) {
-        return "â€”";
+        return "Ã¢â‚¬â€";
     }
 
     return d.toLocaleDateString(undefined, {
@@ -57,7 +57,7 @@ function date(value) {
 function duration(seconds) {
     const sec = Number(seconds || 0);
 
-    if (!sec) return "â€”";
+    if (!sec) return "Ã¢â‚¬â€";
 
     const minutes = Math.floor(sec / 60);
     const remaining = sec % 60;
@@ -211,7 +211,7 @@ function renderChannel(data) {
 
     if ($("meta")) {
         $("meta").textContent =
-            `${num(data.subscribers)} subscribers Â· ${num(data.videos)} videos`;
+            `${num(data.subscribers)} subscribers Ã‚Â· ${num(data.videos)} videos`;
     }
 
     if ($("avatar")) {
@@ -246,7 +246,7 @@ function renderChannel(data) {
         $("avg").textContent =
             averageViews
                 ? num(averageViews)
-                : "â€”";
+                : "Ã¢â‚¬â€";
     }
 
 
@@ -266,7 +266,7 @@ function renderChannel(data) {
 
     if ($("cid")) {
         $("cid").textContent =
-            data.channelId || "â€”";
+            data.channelId || "Ã¢â‚¬â€";
     }
 
 
@@ -385,7 +385,7 @@ function renderChannel(data) {
 
         $("mix").innerHTML = `
             <strong>
-                ${shortPercentage}% Shorts Â·
+                ${shortPercentage}% Shorts Ã‚Â·
                 ${videoPercentage}% Videos
             </strong>
 
@@ -536,9 +536,9 @@ function videoListHTML(items) {
 
                         <div class="video-sub">
                             ${esc(type)}
-                            Â·
+                            Ã‚Â·
                             ${duration(seconds)}
-                            Â·
+                            Ã‚Â·
                             ${date(video.publishedAt)}
                         </div>
                     </div>
@@ -1232,3 +1232,112 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+
+
+
+function toggleLandingProfile(){
+    document.getElementById("profileMenu")?.classList.toggle("open");
+}
+
+function toggleLandingTheme(){
+    const dark=document.documentElement.classList.contains("dark");
+    localStorage.setItem("creatorstats_theme",dark?"light":"dark");
+    document.documentElement.classList.toggle("dark",!dark);
+    const b=document.getElementById("themeMenuButton");
+    if(b)b.textContent=!dark?"Light mode":"Dark mode";
+}
+
+function landingLogout(){
+    ["creatorstats_token","creatorhub_token","token","jwt","accessToken","authToken","user","currentUser"]
+        .forEach(k=>localStorage.removeItem(k));
+    sessionStorage.clear();
+    location.href="/";
+}
+
+document.addEventListener("click",function(e){
+    if(!e.target.closest(".profile-menu")&&!e.target.closest("#profileButton")){
+        document.getElementById("profileMenu")?.classList.remove("open");
+    }
+});
+
+
+/* Landing profile menu */
+(function () {
+    function initLandingProfile() {
+        const button = document.getElementById("profileButton");
+        const menu = document.getElementById("profileMenu");
+
+        if (!button || !menu || button.dataset.ready === "1") return;
+
+        const hasToken =
+            !!localStorage.getItem("creatorstats_token") ||
+            !!localStorage.getItem("creatorhub_token") ||
+            !!localStorage.getItem("token") ||
+            !!localStorage.getItem("jwt") ||
+            !!localStorage.getItem("accessToken") ||
+            !!localStorage.getItem("authToken");
+
+        if (!hasToken) {
+            button.innerHTML = "<span>U</span> Sign In";
+            button.onclick = function () {
+                window.location.href = "/login.html";
+            };
+            return;
+        }
+
+        button.innerHTML = "<span>U</span> Account⌄";
+
+        button.dataset.ready = "1";
+
+        button.addEventListener("click", function (e) {
+            e.stopPropagation();
+            menu.classList.toggle("open");
+        });
+
+        document.addEventListener("click", function (e) {
+            if (!e.target.closest(".profile-wrap")) {
+                menu.classList.remove("open");
+            }
+        });
+
+        const themeButton = document.getElementById("landingThemeButton");
+        if (themeButton) {
+            themeButton.addEventListener("click", function () {
+                document.body.classList.toggle("dark");
+
+                const dark = document.body.classList.contains("dark");
+                localStorage.setItem("creatorstats_theme", dark ? "dark" : "light");
+
+                themeButton.textContent = dark ? "Light mode" : "Dark mode";
+            });
+        }
+
+        const logout = document.getElementById("landingLogout");
+        if (logout) {
+            logout.addEventListener("click", function () {
+                [
+                    "creatorstats_token",
+                    "creatorhub_token",
+                    "token",
+                    "jwt",
+                    "accessToken",
+                    "authToken",
+                    "user",
+                    "currentUser"
+                ].forEach(function (key) {
+                    localStorage.removeItem(key);
+                });
+
+                sessionStorage.clear();
+                window.location.href = "/";
+            });
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initLandingProfile);
+    } else {
+        initLandingProfile();
+    }
+})();
