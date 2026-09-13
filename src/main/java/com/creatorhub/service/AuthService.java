@@ -25,13 +25,13 @@ public class AuthService {
         User user = User.builder().name(request.name().trim()).email(request.email().trim().toLowerCase())
                 .password(passwordEncoder.encode(request.password())).build();
         userRepository.save(user);
-        return new AuthResponse(user.getUserId(), user.getName(), user.getEmail(), jwtService.generateToken(user.getEmail()));
+        return new AuthResponse(user.getUserId(), user.getName(), user.getEmail(), jwtService.generateToken(user.getEmail()), null, "email");
     }
 
     public AuthResponse login(LoginRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
         User user = userRepository.findByEmailIgnoreCase(request.email()).orElseThrow();
-        return new AuthResponse(user.getUserId(), user.getName(), user.getEmail(), jwtService.generateToken(user.getEmail()));
+        return new AuthResponse(user.getUserId(), user.getName(), user.getEmail(), jwtService.generateToken(user.getEmail()), null, "email");
     }
 
     @Transactional
@@ -63,6 +63,6 @@ public class AuthService {
             }
         }
 
-        return new AuthResponse(user.getUserId(), user.getName(), user.getEmail(), jwtService.generateToken(user.getEmail()));
+        return new AuthResponse(user.getUserId(), user.getName(), user.getEmail(), jwtService.generateToken(user.getEmail()), google.picture(), "google");
     }
 }

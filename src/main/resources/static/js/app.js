@@ -1279,14 +1279,25 @@ document.addEventListener("click",function(e){
             !!localStorage.getItem("authToken");
 
         if (!hasToken) {
-            button.innerHTML = "<span>U</span> Sign In";
+            button.classList.remove("avatar-only");
+                button.innerHTML = "<span>U</span> Sign In";
             button.onclick = function () {
                 window.location.href = "/login.html";
             };
             return;
         }
 
-        button.innerHTML = "<span>U</span> Account⌄";
+        button.classList.add("avatar-only");
+        const storedUser = JSON.parse(localStorage.getItem("creatorstats_user") || "null");
+const profileImage = storedUser?.profileImageUrl;
+const profileName = storedUser?.name || storedUser?.email || "User";
+const firstLetter = profileName.trim().charAt(0).toUpperCase() || "U";
+
+if (profileImage) {
+    button.innerHTML = '<img src="' + profileImage + '" alt="Profile" class="profile-avatar" referrerpolicy="no-referrer">';
+} else {
+    button.innerHTML = '<span class="profile-avatar profile-letter">' + firstLetter + '</span>';
+}
 
         button.dataset.ready = "1";
 

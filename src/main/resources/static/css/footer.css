@@ -1,1 +1,87 @@
 .footer{background:linear-gradient(135deg,#081d40,#122b50);color:#fff;padding:31px 0 25px}.footer-container{max-width:1360px;margin:0 auto;padding:0 34px;display:grid;grid-template-columns:1.5fr .7fr .8fr 1.1fr;gap:45px}.footer-logo{display:flex;align-items:center;gap:10px;color:#fff;font-size:24px;font-weight:800;text-decoration:none}.footer-logo>span:last-child{color:#fff}.footer-logo>span:last-child span{color:#147df5}.footer-logo-icon{width:45px;height:45px;color:#147df5;display:flex;align-items:center;justify-content:center}.footer-brand-logo{width:44px;height:44px;object-fit:contain;display:block;filter:drop-shadow(0 0 6px rgba(22,133,247,.55));transition:filter .25s ease,transform .25s ease}.footer-logo:hover .footer-brand-logo{filter:drop-shadow(0 0 10px rgba(22,133,247,.8));transform:scale(1.04)}.footer-tagline{margin-top:1px;margin-left:55px;color:#fff!important;font-size:10px!important}.footer-brand>p:last-child{margin-top:12px;color:#c7d5e9;font-size:11px;line-height:1.65}.footer-column{display:flex;flex-direction:column;align-items:flex-start}.footer-column h3{margin:0 0 9px;color:#fff;font-size:12px;font-weight:700}.footer-column a{margin-bottom:5px;color:#bdcde2;font-size:11px;text-decoration:none;transition:color .2s ease}.footer-column a:hover{color:#fff}.social-links{display:flex;align-items:center;gap:12px;margin-top:2px}.social-links a{width:31px;height:31px;margin:0;border-radius:8px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;transition:transform .2s ease,background .2s ease}.social-links a:hover{transform:translateY(-2px);background:rgba(255,255,255,.16)}.social-links svg{width:17px;height:17px;fill:currentColor;stroke:currentColor}.copyright{margin-top:13px;color:#aebed5;font-size:10px}@media(max-width:800px){.footer{padding:35px 0 28px}.footer-container{grid-template-columns:1fr 1fr;padding:0 24px;gap:28px}.footer-brand{grid-column:1/-1}}@media(max-width:520px){.footer-container{grid-template-columns:1fr;padding:0 20px}.footer-brand{grid-column:auto}.footer-logo{font-size:21px}.footer-column h3{font-size:13px}.footer-column a{font-size:12px}}
+/* CreatorStats real social media logos */
+footer .social-links {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px !important;
+}
+
+footer .social-links a {
+    width: 38px !important;
+    height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: rgba(255,255,255,0.08) !important;
+    border-radius: 9px !important;
+    text-decoration: none !important;
+    transition: transform .2s ease, background .2s ease !important;
+}
+
+footer .social-links a:hover {
+    transform: translateY(-2px) !important;
+    background: rgba(255,255,255,0.16) !important;
+}
+
+footer .social-links svg {
+    width: 24px !important;
+    height: 24px !important;
+    display: block !important;
+}
+
+footer .social-links .x-logo svg {
+    width: 22px !important;
+    height: 22px !important;
+}
+/* Original brand colors */
+footer .social-links a:nth-child(1) svg {
+    color: #E1306C !important;
+    fill: none !important;
+    stroke: #E1306C !important;
+}
+
+footer .social-links a:nth-child(2) svg {
+    color: #FF0000 !important;
+    fill: #FF0000 !important;
+    stroke: none !important;
+}
+
+footer .social-links a:nth-child(3) svg {
+    color: #000000 !important;
+    fill: #000000 !important;
+    stroke: #000000 !important;
+}
+
+footer .social-links a:nth-child(4) svg {
+    color: #5865F2 !important;
+    fill: #5865F2 !important;
+    stroke: #5865F2 !important;
+}
+/* CreatorStats social icon sizing */
+.social-links a.social-instagram svg,
+.social-links a.social-youtube svg,
+.social-links a.social-x svg,
+.social-links a.social-discord svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Keep brand SVG colors */
+.social-links a.social-instagram {
+    color: #E1306C;
+}
+
+.social-links a.social-youtube {
+    color: #FF0000;
+}
+
+.social-links a.social-x {
+    color: #000000;
+}
+
+.social-links a.social-discord {
+    color: #5865F2;
+}

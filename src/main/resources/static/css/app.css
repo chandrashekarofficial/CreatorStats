@@ -1,5 +1,5 @@
 /* =========================================================
-   CreatorStats — Landing Page
+   CreatorStats ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Landing Page
    ========================================================= */
 
 :root {
@@ -1847,7 +1847,7 @@ img {
 /* =========================================================
    DARK MODE
 ========================================================= *//* =========================================================
-   RESPONSIVE — LARGE TABLETS
+   RESPONSIVE ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â LARGE TABLETS
 ========================================================= */
 
 @media (max-width: 1200px) {
@@ -1896,7 +1896,7 @@ img {
 
 
 /* =========================================================
-   RESPONSIVE — TABLET
+   RESPONSIVE ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â TABLET
 ========================================================= */
 
 @media (max-width: 980px) {
@@ -1979,7 +1979,7 @@ img {
 
 
 /* =========================================================
-   RESPONSIVE — MOBILE
+   RESPONSIVE ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â MOBILE
 ========================================================= */
 
 @media (max-width: 640px) {
@@ -2832,4 +2832,69 @@ section.hero-section .hero-content {
 
 .profile-logout {
     color: #c62828;
+}
+
+/* CreatorStats profile avatar */
+.profile-btn:not(.avatar-only) {
+    width: auto;
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 10px;
+}
+
+.profile-btn.avatar-only {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.profile-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+
+.profile-letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+}
+/* Real Font Awesome social icons */
+.site-footer .socials{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.site-footer .socials a{
+    width:38px;
+    height:38px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:10px;
+    color:#dbe8f7;
+    background:rgba(255,255,255,.07);
+    text-decoration:none;
+    transition:all .2s ease;
+}
+
+.site-footer .socials a i{
+    font-size:18px;
+}
+
+.site-footer .socials a:hover{
+    transform:translateY(-2px);
+    background:#1685f7;
+    color:#fff;
 }

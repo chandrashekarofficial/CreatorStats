@@ -47,19 +47,20 @@ public class GoogleTokenVerifierService {
             String subject = jwt.getSubject();
             String email = jwt.getClaimAsString("email");
             String name = jwt.getClaimAsString("name");
+            String picture = jwt.getClaimAsString("picture");
             String hostedDomain = jwt.getClaimAsString("hd");
 
             if (subject == null || subject.isBlank() || email == null || email.isBlank() || !Boolean.TRUE.equals(emailVerified)) {
                 throw new IllegalArgumentException("Google account email could not be verified");
             }
 
-            return new GoogleProfile(subject, email.trim().toLowerCase(), name, hostedDomain);
+            return new GoogleProfile(subject, email.trim().toLowerCase(), name, picture, hostedDomain);
         } catch (JwtException | IllegalArgumentException ex) {
             throw new IllegalArgumentException("Invalid Google sign-in credential");
         }
     }
 
-    public record GoogleProfile(String subject, String email, String name, String hostedDomain) {
+    public record GoogleProfile(String subject, String email, String name, String picture, String hostedDomain) {
         public boolean googleAuthoritativeEmail() {
             return email.endsWith("@gmail.com") || (hostedDomain != null && !hostedDomain.isBlank());
         }
