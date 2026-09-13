@@ -1,5 +1,5 @@
 /* =========================================================
-   CreatorStats Ã¢â‚¬â€ Landing Page JavaScript
+   CreatorStats ? Landing Page JavaScript
    ========================================================= */
 
 "use strict";
@@ -39,12 +39,12 @@ function esc(value) {
 }
 
 function date(value) {
-    if (!value) return "Ã¢â‚¬â€";
+    if (!value) return "?";
 
     const d = new Date(value);
 
     if (Number.isNaN(d.getTime())) {
-        return "Ã¢â‚¬â€";
+        return "?";
     }
 
     return d.toLocaleDateString(undefined, {
@@ -57,7 +57,7 @@ function date(value) {
 function duration(seconds) {
     const sec = Number(seconds || 0);
 
-    if (!sec) return "Ã¢â‚¬â€";
+    if (!sec) return "?";
 
     const minutes = Math.floor(sec / 60);
     const remaining = sec % 60;
@@ -211,7 +211,7 @@ function renderChannel(data) {
 
     if ($("meta")) {
         $("meta").textContent =
-            `${num(data.subscribers)} subscribers Ã‚Â· ${num(data.videos)} videos`;
+            `${num(data.subscribers)} subscribers ? ${num(data.videos)} videos`;
     }
 
     if ($("avatar")) {
@@ -246,7 +246,7 @@ function renderChannel(data) {
         $("avg").textContent =
             averageViews
                 ? num(averageViews)
-                : "Ã¢â‚¬â€";
+                : "?";
     }
 
 
@@ -266,7 +266,7 @@ function renderChannel(data) {
 
     if ($("cid")) {
         $("cid").textContent =
-            data.channelId || "Ã¢â‚¬â€";
+            data.channelId || "?";
     }
 
 
@@ -385,7 +385,7 @@ function renderChannel(data) {
 
         $("mix").innerHTML = `
             <strong>
-                ${shortPercentage}% Shorts Ã‚Â·
+                ${shortPercentage}% Shorts ?
                 ${videoPercentage}% Videos
             </strong>
 
@@ -536,9 +536,9 @@ function videoListHTML(items) {
 
                         <div class="video-sub">
                             ${esc(type)}
-                            Ã‚Â·
+                            ?
                             ${duration(seconds)}
-                            Ã‚Â·
+                            ?
                             ${date(video.publishedAt)}
                         </div>
                     </div>
